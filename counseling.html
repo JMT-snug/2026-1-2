@@ -170,7 +170,7 @@ let slotList = [];          // 모든 상담 시간
 let resvMap = {};           // (교사용) slotId → 예약자 정보
 let myResvIds = new Set();  // (학생용) 내가 신청한 slotId
 let unsubSlots = null;      // 실시간 감시 해제용
-let viewY = 0, viewM = 0;   // 달력에서 보고 있는 연/월
+let viewAnchor = '';        // 달력 첫 줄의 일요일 (이번 주부터 4주 표시)
 let copySrc = null;         // 복사 모드의 원본 날짜
 
 // ── 유틸 ─────────────────────────────────────────────────────
@@ -234,21 +234,23 @@ function startWatch(){
     slotList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
     slotList.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
     if(!userProfile) return;
-    if(userProfile.role === 'teacher'){ await loadResvAll(); paintCalendar(); }
+    if(userProfile.role === 'teacher'){ await loadResvAll(); paintCalendar(); paintOverview(); }
     else { paintCalendar(); paintMyList(); }
   });
 }
 
-// ── 달력 그리기 ──────────────────────────────────────────────
-function monthWeeks(y, m){
-  const startDow = new Date(y, m-1, 1).getDay();
-  const daysIn = new Date(y, m, 0).getDate();
-  const weeks = []; let week = new Array(startDow).fill(null);
-  for(let d = 1; d <= daysIn; d++){
-    week.push(d);
-    if(week.length === 7){ weeks.push(week); week = []; }
+// ── 달력 그리기 (이번 주부터 4주) ─────────────────────────────
+function sundayOf(dateStr){ // 그 날짜가 속한 주의 일요일
+  const [y,m,d] = dateStr.split('-').map(Number);
+  return addDays(dateStr, -new Date(y, m-1, d).getDay());
+}
+function fourWeeks(){ // viewAnchor(일요일)부터 4주 × 7일의 날짜 목록
+  const weeks = [];
+  for(let w = 0; w < 4; w++){
+    const row = [];
+    for(let i = 0; i < 7; i++) row.push(addDays(viewAnchor, w*7 + i));
+    weeks.push(row);
   }
-  if(week.length){ while(week.length < 7) week.push(null); weeks.push(week); }
   return weeks;
 }
 
@@ -259,12 +261,14 @@ function calendarHtml(){
   const headers = ['일','월','화','수','목','금','토'].map((h,i) =>
     `<div class="cal-hcell ${i===0?'sun':i===6?'sat':''}">${h}</div>`).join('');
 
-  const rows = monthWeeks(viewY, viewM).map(week => {
-    const cells = week.map((day, ci) => {
-      if(day === null) return `<div class="cal-cell empty"></div>`;
-      const date = dstr(viewY, viewM, day);
+  const weeks = fourWeeks();
+  const rows = weeks.map(week => {
+    const cells = week.map((date, ci) => {
+      const [, mm, dd] = date.split('-').map(Number);
       const slots = groups[date] || [];
       const isPast = date < today;
+      // 1일이거나 달력의 첫 칸이면 "월/일"로 표시해 달이 바뀌는 지점을 알림
+      const dayLabel = (dd === 1 || date === weeks[0][0]) ? `${mm}/${dd}` : `${dd}`;
 
       let chips = '';
       if(teacher){
@@ -290,6 +294,7 @@ function calendarHtml(){
       const cls = ['cal-cell',
         ci===0?'sun-col':ci===6?'sat-col':'',
         date===today?'today':'',
+        isPast&&!slots.length?'empty':'',
         teacher ? (copySrc && copySrc!==date ? 'pastable' : 't-clickable') : ''
       ].filter(Boolean).join(' ');
 
@@ -297,21 +302,27 @@ function calendarHtml(){
         ? `<button class="btn-copy" data-copy="${date}" title="이 날짜의 시간 복사">📋</button>` : '';
 
       return `<div class="${cls}" data-date="${date}">
-        <div class="cal-date"><span>${day}</span>${copyBtn}</div>
+        <div class="cal-date"><span>${dayLabel}</span>${copyBtn}</div>
         ${chips}
       </div>`;
     }).join('');
     return `<div class="cal-row">${cells}</div>`;
   }).join('');
 
+  // 위쪽 라벨: 표시 범위 (예: 8월 23일 ~ 9월 19일)
+  const last = addDays(viewAnchor, 27);
+  const [ay,am,ad] = viewAnchor.split('-').map(Number);
+  const [ly,lm,ld] = last.split('-').map(Number);
+  const rangeLabel = `${am}월 ${ad}일 ~ ${ly!==ay?ly+'년 ':''}${lm}월 ${ld}일`;
+
   return `
   <div class="cal-scroll"><div class="cal">
     <div class="cal-top">
-      <span class="cal-month">${viewY}년 ${viewM}월</span>
+      <span class="cal-month">${rangeLabel}</span>
       <div class="cal-nav">
-        <button id="calPrev">◀ 이전 달</button>
-        <button id="calToday">오늘</button>
-        <button id="calNext">다음 달 ▶</button>
+        <button id="calPrev">◀ 지난주</button>
+        <button id="calToday">이번주</button>
+        <button id="calNext">다음주 ▶</button>
       </div>
     </div>
     <div class="cal-head">${headers}</div>
@@ -324,15 +335,15 @@ function paintCalendar(){
   if(!area) return;
   area.innerHTML = calendarHtml();
 
-  // 달 이동
+  // 한 주씩 이동
   document.getElementById('calPrev').addEventListener('click', () => {
-    viewM--; if(viewM < 1){ viewM = 12; viewY--; } paintCalendar();
+    viewAnchor = addDays(viewAnchor, -7); paintCalendar();
   });
   document.getElementById('calNext').addEventListener('click', () => {
-    viewM++; if(viewM > 12){ viewM = 1; viewY++; } paintCalendar();
+    viewAnchor = addDays(viewAnchor, 7); paintCalendar();
   });
   document.getElementById('calToday').addEventListener('click', () => {
-    const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1; paintCalendar();
+    viewAnchor = sundayOf(todayStr()); paintCalendar();
   });
 
   if(userProfile.role === 'teacher') attachTeacherCal();
@@ -486,6 +497,35 @@ function paintMyList(){
   });
 }
 
+// ── 교사: 신청 현황판 ─────────────────────────────────────────
+function paintOverview(){
+  const box = document.getElementById('ovArea');
+  if(!box) return;
+  const today = todayStr();
+  const taken = slotList.filter(s => s.taken && s.date >= today);
+  if(!taken.length){
+    box.innerHTML = `<div class="my-empty">아직 신청된 상담이 없습니다.</div>`;
+    return;
+  }
+  const groups = {};
+  taken.forEach(s => (groups[s.date] = groups[s.date] || []).push(s));
+  box.innerHTML = Object.keys(groups).sort().map(date => {
+    const rows = groups[date].map(s => {
+      const r = resvMap[s.id] || {};
+      const num = r.studentId ? parseInt(r.studentId.replace('student_','')) : null;
+      return `<div class="my-item">
+        <span>🕐 ${s.time}</span>
+        <span style="color:#FBBF24">${r.name || '?'}${num ? ` (${num}번)` : ''}</span>
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:900;color:var(--glow);margin-bottom:4px">
+        ${fmtDate(date)}${date === today ? ' · 오늘' : ''} — ${groups[date].length}건
+      </div>${rows}
+    </div>`;
+  }).join('');
+}
+
 // ── 공통 헤더 ────────────────────────────────────────────────
 function headerHtml(){
   const teacher = isTeacher(currentUser);
@@ -508,7 +548,7 @@ function headerHtml(){
 
 // ── 교사 메인 ────────────────────────────────────────────────
 function renderTeacherMain(){
-  const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1;
+  viewAnchor = sundayOf(todayStr());
   setApp(`
     ${headerHtml()}
     <div class="main-wrap">
@@ -535,6 +575,9 @@ function renderTeacherMain(){
 
       <div class="section-title">📅 상담 시간표 <span style="font-weight:400;text-transform:none;letter-spacing:0">— 예약되면 학생 이름이 표시됩니다 (실시간)</span></div>
       <div id="calArea"></div>
+
+      <div class="section-title">📋 신청 현황 <span style="font-weight:400;text-transform:none;letter-spacing:0">— 오늘 이후 예약을 한눈에</span></div>
+      <div class="my-list" id="ovArea"></div>
     </div>
   `);
   document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
@@ -569,7 +612,8 @@ function renderTeacherMain(){
         made++;
       }
       showToast(made ? `${fmtDate(date)}에 ${made}칸 만들었어요 ✓` : '모두 이미 있는 시간이에요');
-      const [y,m] = date.split('-').map(Number); viewY = y; viewM = m;
+      // 만든 날짜가 지금 보이는 4주 밖이면 그 주가 보이도록 이동
+      if(date < viewAnchor || date > addDays(viewAnchor, 27)) viewAnchor = sundayOf(date);
     }catch(e){ showToast('저장 실패: ' + e.message); }
   });
 
@@ -578,7 +622,7 @@ function renderTeacherMain(){
 
 // ── 학생 메인 ────────────────────────────────────────────────
 async function renderStudentMain(){
-  const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1;
+  viewAnchor = sundayOf(todayStr());
   await loadMyResv();
   setApp(`
     ${headerHtml()}
