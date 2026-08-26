@@ -46,9 +46,34 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* ── Main ── */
 .main-wrap{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+.section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;margin-top:36px;}
 .placeholder{background:var(--surface);border:1px dashed var(--border);border-radius:20px;padding:48px 24px;text-align:center;color:var(--muted);margin-top:24px;}
 .placeholder .em{font-size:44px;margin-bottom:14px;}
 .placeholder .big{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+
+/* ── Admin panel ── */
+.admin-panel{background:rgba(245,158,11,0.07);border:1px dashed rgba(245,158,11,0.4);border-radius:18px;padding:20px 22px;}
+.admin-title{font-size:12px;font-weight:900;color:#FBBF24;margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;}
+.admin-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:700;color:var(--muted);}
+.admin-input{background:rgba(255,255,255,0.06);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;transition:border-color 0.2s;color-scheme:dark;}
+.admin-input:focus{outline:none;border-color:#FBBF24;}
+.btn-admin{background:linear-gradient(135deg,#F59E0B,#D97706);color:white;border:none;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;}
+.admin-hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
+
+/* ── Slot list ── */
+.date-group{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:16px;}
+.date-label{font-family:'Gmarket Sans',sans-serif;font-size:15px;font-weight:700;color:var(--glow);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.date-count{font-size:12px;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:400;}
+.slot-row{display:flex;flex-wrap:wrap;gap:10px;}
+.slot-chip{display:flex;align-items:center;gap:8px;background:rgba(45,212,191,0.08);border:1px solid rgba(45,212,191,0.25);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;}
+.slot-chip.taken{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.35);}
+.slot-badge{font-size:10px;font-weight:900;color:#FBBF24;background:rgba(245,158,11,0.15);border-radius:6px;padding:2px 7px;}
+.slot-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color 0.15s;}
+.slot-del:hover{color:var(--red);}
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty-state .em{font-size:44px;margin-bottom:12px;}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(22,36,31,0.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);color:var(--text);border-radius:14px;padding:12px 24px;font-size:14px;font-weight:700;z-index:300;opacity:0;transition:opacity 0.3s,transform 0.3s;white-space:nowrap;pointer-events:none;}
@@ -65,7 +90,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, collection, getDocs, query, where }
+import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs, query, where }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── 설정 (미라클 6월과 동일한 Firebase 프로젝트) ──────────────
@@ -90,6 +115,7 @@ const db = getFirestore(fbApp);
 const gProv = new GoogleAuthProvider();
 
 let currentUser = null, userProfile = null;
+let slotList = []; // 상담 시간 목록
 
 // ── 유틸 ─────────────────────────────────────────────────────
 const isTeacher = u => u?.email && TEACHER_EMAILS.includes(u.email.toLowerCase());
@@ -101,6 +127,15 @@ function showToast(msg, dur = 2600){
 }
 function setApp(h){ document.getElementById('app').innerHTML = h; }
 
+// "2026-09-03" → "9월 3일 (목)"
+function fmtDate(d){
+  const [y,m,dd] = d.split('-').map(Number);
+  const day = ['일','월','화','수','목','금','토'][new Date(y, m-1, dd).getDay()];
+  return `${m}월 ${dd}일 (${day})`;
+}
+const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60 + m; };
+const toTime = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+
 // 미라클 6월에서 쓰는 students 명단을 그대로 재사용
 async function findByEmail(email){
   try{
@@ -108,6 +143,23 @@ async function findByEmail(email){
     if(s.empty) return null;
     const d = s.docs[0]; return { id:d.id, ...d.data() };
   }catch{ return null; }
+}
+
+// ── 상담 시간 데이터 ─────────────────────────────────────────
+async function loadSlots(){
+  try{
+    const s = await getDocs(collection(db,'counsel_slots'));
+    slotList = s.docs.map(d => ({ id:d.id, ...d.data() }));
+    // 날짜 → 시각 순으로 정렬
+    slotList.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+  }catch{ slotList = []; }
+}
+
+// 날짜별로 묶기: { "2026-09-03": [slot, slot...], ... }
+function groupByDate(){
+  const g = {};
+  slotList.forEach(s => { (g[s.date] = g[s.date] || []).push(s); });
+  return g;
 }
 
 // ── 공통 헤더 ────────────────────────────────────────────────
@@ -130,19 +182,120 @@ function headerHtml(){
   </div>`;
 }
 
-// ── 교사 화면 (2단계에서 시간 설정 기능이 들어갈 자리) ────────
-function renderTeacherMain(){
+// ── 교사 화면: 상담 시간 설정 ─────────────────────────────────
+function teacherSlotListHtml(){
+  if(!slotList.length)
+    return `<div class="empty-state"><div class="em">🗓️</div>아직 만든 상담 시간이 없습니다.<br>위 패널에서 날짜와 시간을 추가해 보세요.</div>`;
+  const groups = groupByDate();
+  return Object.keys(groups).map(date => {
+    const slots = groups[date];
+    const takenCnt = slots.filter(s => s.taken).length;
+    const chips = slots.map(s => `
+      <span class="slot-chip${s.taken ? ' taken' : ''}">
+        ${s.time}
+        ${s.taken ? '<span class="slot-badge">예약됨</span>' : ''}
+        <button class="slot-del" data-id="${s.id}" data-taken="${s.taken ? 1 : 0}" title="삭제">✕</button>
+      </span>`).join('');
+    return `
+    <div class="date-group">
+      <div class="date-label">${fmtDate(date)}
+        <span class="date-count">${slots.length}칸 · 예약 ${takenCnt}</span>
+      </div>
+      <div class="slot-row">${chips}</div>
+    </div>`;
+  }).join('');
+}
+
+async function renderTeacherMain(){
+  await loadSlots();
   setApp(`
     ${headerHtml()}
     <div class="main-wrap">
-      <div class="placeholder">
-        <div class="em">🗓️</div>
-        <div class="big">교사용 상담 시간 설정</div>
-        여기에 상담 가능한 날짜·시간을 추가하는 화면이 들어갑니다. (2단계)
+      <div class="section-title" style="margin-top:0">🔧 상담 시간 만들기</div>
+      <div class="admin-panel">
+        <div class="admin-title">날짜와 시간을 정하면 시간 칸을 자동으로 만듭니다</div>
+        <div class="admin-row">
+          <div class="field"><label>날짜</label>
+            <input class="admin-input" id="inDate" type="date"></div>
+          <div class="field"><label>시작</label>
+            <input class="admin-input" id="inStart" type="time" value="15:00"></div>
+          <div class="field"><label>종료</label>
+            <input class="admin-input" id="inEnd" type="time" value="17:00"></div>
+          <div class="field"><label>간격(분)</label>
+            <input class="admin-input" id="inGap" type="number" value="20" min="5" max="120" style="width:80px"></div>
+          <button class="btn-admin" id="btnGen">+ 시간 만들기</button>
+        </div>
+        <div class="admin-hint">
+          예: 시작 15:00 · 종료 17:00 · 간격 20분 → 15:00, 15:20, 15:40, 16:00, 16:20, 16:40 여섯 칸이 생깁니다.
+          한 칸만 추가하려면 종료를 비워두고 시작 시각만 넣으세요. 이미 있는 시간은 건너뜁니다.
+        </div>
       </div>
+
+      <div class="section-title">📋 만든 상담 시간</div>
+      <div id="slotArea">${teacherSlotListHtml()}</div>
     </div>
   `);
   document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
+
+  // 시간 자동 생성
+  document.getElementById('btnGen').addEventListener('click', async () => {
+    const date = document.getElementById('inDate').value;
+    const start = document.getElementById('inStart').value;
+    const end = document.getElementById('inEnd').value;
+    const gap = parseInt(document.getElementById('inGap').value);
+    if(!date){ showToast('날짜를 선택해주세요'); return; }
+    if(!start){ showToast('시작 시각을 입력해주세요'); return; }
+    if(!gap || gap < 5){ showToast('간격은 5분 이상으로 해주세요'); return; }
+
+    // 만들 시각 목록 계산
+    let times = [];
+    if(!end){
+      times = [start]; // 종료가 비어 있으면 한 칸만
+    }else{
+      if(toMin(end) <= toMin(start)){ showToast('종료 시각이 시작보다 늦어야 합니다'); return; }
+      for(let m = toMin(start); m + gap <= toMin(end); m += gap) times.push(toTime(m));
+      if(!times.length) times = [start];
+    }
+    if(times.length > 40){ showToast('한 번에 40칸까지만 만들 수 있어요'); return; }
+
+    // 이미 있는 시간은 건너뛰고 저장
+    const exist = new Set(slotList.map(s => s.id));
+    let made = 0;
+    try{
+      for(const t of times){
+        const id = `${date}_${t}`;
+        if(exist.has(id)) continue;
+        await setDoc(doc(db,'counsel_slots',id), {
+          date, time: t, taken: false, createdAt: new Date().toISOString()
+        });
+        made++;
+      }
+      showToast(made ? `${fmtDate(date)}에 ${made}칸 만들었어요 ✓` : '모두 이미 있는 시간이에요');
+      await loadSlots();
+      document.getElementById('slotArea').innerHTML = teacherSlotListHtml();
+      attachDelete();
+    }catch(e){ showToast('저장 실패: ' + e.message); }
+  });
+
+  attachDelete();
+}
+
+// 삭제 버튼 연결
+function attachDelete(){
+  document.querySelectorAll('.slot-del').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const taken = btn.dataset.taken === '1';
+      if(taken && !confirm('이미 학생이 신청한 시간입니다. 정말 삭제할까요?')) return;
+      try{
+        await deleteDoc(doc(db,'counsel_slots',id));
+        showToast('삭제했어요 ✓');
+        await loadSlots();
+        document.getElementById('slotArea').innerHTML = teacherSlotListHtml();
+        attachDelete();
+      }catch(e){ showToast('삭제 실패: ' + e.message); }
+    });
+  });
 }
 
 // ── 학생 화면 (3단계에서 선착순 신청 기능이 들어갈 자리) ──────
