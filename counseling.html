@@ -45,11 +45,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .btn-signout:hover{border-color:var(--red);color:var(--red);}
 
 /* ── Main ── */
-.main-wrap{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+.main-wrap{max-width:1000px;margin:0 auto;padding:32px 24px 80px;}
 .section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;margin-top:36px;}
-.placeholder{background:var(--surface);border:1px dashed var(--border);border-radius:20px;padding:48px 24px;text-align:center;color:var(--muted);margin-top:24px;}
-.placeholder .em{font-size:44px;margin-bottom:14px;}
-.placeholder .big{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
 
 /* ── Admin panel ── */
 .admin-panel{background:rgba(245,158,11,0.07);border:1px dashed rgba(245,158,11,0.4);border-radius:18px;padding:20px 22px;}
@@ -62,16 +59,69 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .btn-admin{background:linear-gradient(135deg,#F59E0B,#D97706);color:white;border:none;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;}
 .admin-hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
 
-/* ── Slot list ── */
-.date-group{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:16px;}
-.date-label{font-family:'Gmarket Sans',sans-serif;font-size:15px;font-weight:700;color:var(--glow);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
-.date-count{font-size:12px;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-weight:400;}
-.slot-row{display:flex;flex-wrap:wrap;gap:10px;}
-.slot-chip{display:flex;align-items:center;gap:8px;background:rgba(45,212,191,0.08);border:1px solid rgba(45,212,191,0.25);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;}
-.slot-chip.taken{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.35);}
-.slot-badge{font-size:10px;font-weight:900;color:#FBBF24;background:rgba(245,158,11,0.15);border-radius:6px;padding:2px 7px;}
-.slot-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color 0.15s;}
+/* ── Copy bar ── */
+.copy-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(45,212,191,0.08);border:1px solid rgba(45,212,191,0.35);border-radius:14px;padding:12px 16px;margin-top:14px;font-size:13px;font-weight:700;color:var(--glow);}
+.copy-bar button{border:none;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.btn-repeat{background:rgba(45,212,191,0.2);color:var(--glow);}
+.btn-copy-done{background:rgba(255,255,255,0.1);color:var(--text);}
+
+/* ── Calendar ── */
+.cal-scroll{overflow-x:auto;}
+.cal{min-width:680px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.cal-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);}
+.cal-month{font-family:'Gmarket Sans',sans-serif;font-size:16px;font-weight:700;color:var(--glow);}
+.cal-nav{display:flex;gap:8px;}
+.cal-nav button{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.cal-nav button:hover{border-color:var(--glow);color:var(--glow);}
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);}
+.cal-hcell{text-align:center;font-size:11px;font-weight:900;color:var(--muted);padding:8px 4px;letter-spacing:1px;}
+.cal-hcell.sun{color:rgba(239,68,68,0.8);}
+.cal-hcell.sat{color:#5EEAD4;}
+.cal-row{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--border);}
+.cal-row:first-of-type{border-top:none;}
+.cal-cell{border-right:1px solid var(--border);min-height:92px;padding:6px;position:relative;}
+.cal-cell:last-child{border-right:none;}
+.cal-cell.empty{background:rgba(0,0,0,0.15);}
+.cal-cell.today{box-shadow:inset 0 0 0 2px rgba(45,212,191,0.4);}
+.cal-date{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:5px;font-family:'Gmarket Sans',sans-serif;display:flex;justify-content:space-between;align-items:center;}
+.cal-cell.sun-col .cal-date{color:rgba(239,68,68,0.7);}
+.cal-cell.sat-col .cal-date{color:#5EEAD4;}
+.btn-copy{background:transparent;border:none;font-size:12px;cursor:pointer;opacity:0.55;padding:0 2px;}
+.btn-copy:hover{opacity:1;}
+.cal-cell.pastable{cursor:copy;}
+.cal-cell.pastable:hover{background:rgba(45,212,191,0.08);}
+.cal-cell.t-clickable{cursor:pointer;}
+.cal-cell.t-clickable:hover{background:rgba(255,255,255,0.03);}
+
+/* 교사용 칩 */
+.tchip{display:flex;align-items:center;justify-content:space-between;gap:4px;background:rgba(45,212,191,0.09);border:1px solid rgba(45,212,191,0.28);border-radius:8px;padding:3px 6px;font-size:11px;font-weight:700;margin-bottom:4px;}
+.tchip.taken{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.4);}
+.tchip .nm{color:#FBBF24;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:64px;}
+.slot-del{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 1px;line-height:1;}
 .slot-del:hover{color:var(--red);}
+
+/* 학생용 시간 버튼 */
+.sbtn{display:block;width:100%;margin-bottom:4px;border-radius:8px;padding:5px 6px;font-size:12px;font-weight:700;border:1px solid;font-family:'Noto Sans KR',sans-serif;text-align:center;}
+.sbtn.free{background:rgba(45,212,191,0.1);border-color:rgba(45,212,191,0.4);color:var(--glow);cursor:pointer;transition:all 0.15s;}
+.sbtn.free:hover{background:rgba(45,212,191,0.25);transform:translateY(-1px);}
+.sbtn.mine{background:rgba(16,185,129,0.16);border-color:rgba(16,185,129,0.55);color:#6EE7B7;cursor:pointer;}
+.sbtn.mine:hover{border-color:var(--red);color:#FCA5A5;}
+.sbtn.other{background:rgba(255,255,255,0.03);border-color:var(--border);color:var(--muted);cursor:default;}
+.sbtn.past{opacity:0.3;cursor:default;}
+
+/* 내 신청 목록 */
+.my-list{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;}
+.my-item{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;}
+.my-item:last-child{border-bottom:none;}
+.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.btn-cancel:hover{border-color:var(--red);color:var(--red);}
+.my-empty{font-size:13px;color:var(--muted);padding:8px 0;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 2px 20px;}
+.legend span{display:flex;align-items:center;gap:6px;}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block;}
+.dot.free{background:rgba(45,212,191,0.35);}
+.dot.mine{background:rgba(16,185,129,0.6);}
+.dot.other{background:rgba(255,255,255,0.12);}
 .empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
 .empty-state .em{font-size:44px;margin-bottom:12px;}
 
@@ -90,7 +140,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs, query, where }
+import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs, query, where,
+         onSnapshot, runTransaction }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── 설정 (미라클 6월과 동일한 Firebase 프로젝트) ──────────────
@@ -115,7 +166,12 @@ const db = getFirestore(fbApp);
 const gProv = new GoogleAuthProvider();
 
 let currentUser = null, userProfile = null;
-let slotList = []; // 상담 시간 목록
+let slotList = [];          // 모든 상담 시간
+let resvMap = {};           // (교사용) slotId → 예약자 정보
+let myResvIds = new Set();  // (학생용) 내가 신청한 slotId
+let unsubSlots = null;      // 실시간 감시 해제용
+let viewY = 0, viewM = 0;   // 달력에서 보고 있는 연/월
+let copySrc = null;         // 복사 모드의 원본 날짜
 
 // ── 유틸 ─────────────────────────────────────────────────────
 const isTeacher = u => u?.email && TEACHER_EMAILS.includes(u.email.toLowerCase());
@@ -126,15 +182,21 @@ function showToast(msg, dur = 2600){
   clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), dur);
 }
 function setApp(h){ document.getElementById('app').innerHTML = h; }
-
-// "2026-09-03" → "9월 3일 (목)"
+const pad = n => String(n).padStart(2,'0');
+const dstr = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
+function todayStr(){ const t = new Date(); return dstr(t.getFullYear(), t.getMonth()+1, t.getDate()); }
 function fmtDate(d){
   const [y,m,dd] = d.split('-').map(Number);
   const day = ['일','월','화','수','목','금','토'][new Date(y, m-1, dd).getDay()];
   return `${m}월 ${dd}일 (${day})`;
 }
+function addDays(d, n){
+  const [y,m,dd] = d.split('-').map(Number);
+  const t = new Date(y, m-1, dd + n);
+  return dstr(t.getFullYear(), t.getMonth()+1, t.getDate());
+}
 const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60 + m; };
-const toTime = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+const toTime = m => pad(Math.floor(m/60)) + ':' + pad(m%60);
 
 // 미라클 6월에서 쓰는 students 명단을 그대로 재사용
 async function findByEmail(email){
@@ -145,21 +207,283 @@ async function findByEmail(email){
   }catch{ return null; }
 }
 
-// ── 상담 시간 데이터 ─────────────────────────────────────────
-async function loadSlots(){
-  try{
-    const s = await getDocs(collection(db,'counsel_slots'));
-    slotList = s.docs.map(d => ({ id:d.id, ...d.data() }));
-    // 날짜 → 시각 순으로 정렬
-    slotList.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
-  }catch{ slotList = []; }
-}
-
-// 날짜별로 묶기: { "2026-09-03": [slot, slot...], ... }
+// ── 데이터 ───────────────────────────────────────────────────
 function groupByDate(){
   const g = {};
   slotList.forEach(s => { (g[s.date] = g[s.date] || []).push(s); });
   return g;
+}
+async function loadResvAll(){ // 교사: 예약자 명단
+  try{
+    const s = await getDocs(collection(db,'counsel_resv'));
+    resvMap = {};
+    s.docs.forEach(d => resvMap[d.id] = d.data());
+  }catch{ resvMap = {}; }
+}
+async function loadMyResv(){ // 학생: 내 예약
+  try{
+    const s = await getDocs(query(collection(db,'counsel_resv'), where('uid','==',currentUser.uid)));
+    myResvIds = new Set(s.docs.map(d => d.id));
+  }catch{ myResvIds = new Set(); }
+}
+
+// 실시간 감시: 시간표가 바뀌면 달력을 자동으로 다시 그림
+function startWatch(){
+  if(unsubSlots) unsubSlots();
+  unsubSlots = onSnapshot(collection(db,'counsel_slots'), async snap => {
+    slotList = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    slotList.sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+    if(!userProfile) return;
+    if(userProfile.role === 'teacher'){ await loadResvAll(); paintCalendar(); }
+    else { paintCalendar(); paintMyList(); }
+  });
+}
+
+// ── 달력 그리기 ──────────────────────────────────────────────
+function monthWeeks(y, m){
+  const startDow = new Date(y, m-1, 1).getDay();
+  const daysIn = new Date(y, m, 0).getDate();
+  const weeks = []; let week = new Array(startDow).fill(null);
+  for(let d = 1; d <= daysIn; d++){
+    week.push(d);
+    if(week.length === 7){ weeks.push(week); week = []; }
+  }
+  if(week.length){ while(week.length < 7) week.push(null); weeks.push(week); }
+  return weeks;
+}
+
+function calendarHtml(){
+  const teacher = userProfile.role === 'teacher';
+  const groups = groupByDate();
+  const today = todayStr();
+  const headers = ['일','월','화','수','목','금','토'].map((h,i) =>
+    `<div class="cal-hcell ${i===0?'sun':i===6?'sat':''}">${h}</div>`).join('');
+
+  const rows = monthWeeks(viewY, viewM).map(week => {
+    const cells = week.map((day, ci) => {
+      if(day === null) return `<div class="cal-cell empty"></div>`;
+      const date = dstr(viewY, viewM, day);
+      const slots = groups[date] || [];
+      const isPast = date < today;
+
+      let chips = '';
+      if(teacher){
+        chips = slots.map(s => `
+          <div class="tchip${s.taken?' taken':''}">
+            <span>${s.time}</span>
+            ${s.taken ? `<span class="nm">${(resvMap[s.id]?.name)||'?'}</span>` : ''}
+            <button class="slot-del" data-id="${s.id}" data-taken="${s.taken?1:0}" title="삭제">✕</button>
+          </div>`).join('');
+      }else{
+        chips = slots.map(s => {
+          const mine = myResvIds.has(s.id);
+          if(mine)
+            return `<button class="sbtn mine" data-id="${s.id}" data-act="cancel" title="누르면 취소">${s.time} ✓</button>`;
+          if(s.taken)
+            return `<button class="sbtn other" disabled>${s.time} 예약됨</button>`;
+          if(isPast)
+            return `<button class="sbtn free past" disabled>${s.time}</button>`;
+          return `<button class="sbtn free" data-id="${s.id}" data-act="reserve">${s.time}</button>`;
+        }).join('');
+      }
+
+      const cls = ['cal-cell',
+        ci===0?'sun-col':ci===6?'sat-col':'',
+        date===today?'today':'',
+        teacher ? (copySrc && copySrc!==date ? 'pastable' : 't-clickable') : ''
+      ].filter(Boolean).join(' ');
+
+      const copyBtn = (teacher && slots.length && !copySrc)
+        ? `<button class="btn-copy" data-copy="${date}" title="이 날짜의 시간 복사">📋</button>` : '';
+
+      return `<div class="${cls}" data-date="${date}">
+        <div class="cal-date"><span>${day}</span>${copyBtn}</div>
+        ${chips}
+      </div>`;
+    }).join('');
+    return `<div class="cal-row">${cells}</div>`;
+  }).join('');
+
+  return `
+  <div class="cal-scroll"><div class="cal">
+    <div class="cal-top">
+      <span class="cal-month">${viewY}년 ${viewM}월</span>
+      <div class="cal-nav">
+        <button id="calPrev">◀ 이전 달</button>
+        <button id="calToday">오늘</button>
+        <button id="calNext">다음 달 ▶</button>
+      </div>
+    </div>
+    <div class="cal-head">${headers}</div>
+    ${rows}
+  </div></div>`;
+}
+
+function paintCalendar(){
+  const area = document.getElementById('calArea');
+  if(!area) return;
+  area.innerHTML = calendarHtml();
+
+  // 달 이동
+  document.getElementById('calPrev').addEventListener('click', () => {
+    viewM--; if(viewM < 1){ viewM = 12; viewY--; } paintCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    viewM++; if(viewM > 12){ viewM = 1; viewY++; } paintCalendar();
+  });
+  document.getElementById('calToday').addEventListener('click', () => {
+    const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1; paintCalendar();
+  });
+
+  if(userProfile.role === 'teacher') attachTeacherCal();
+  else attachStudentCal();
+}
+
+// ── 교사: 달력 동작 (셀 클릭·복사·삭제) ──────────────────────
+function updateCopyBar(){
+  const bar = document.getElementById('copyBar');
+  if(!bar) return;
+  if(!copySrc){ bar.style.display = 'none'; bar.innerHTML = ''; return; }
+  const cnt = (groupByDate()[copySrc] || []).length;
+  bar.style.display = 'flex';
+  bar.innerHTML = `
+    📋 <b>${fmtDate(copySrc)}</b>의 시간 ${cnt}칸 복사 중 — 달력에서 붙여넣을 날짜를 클릭하세요
+    <button class="btn-repeat" id="btnRepeat">🔁 매주 반복</button>
+    <button class="btn-copy-done" id="btnCopyDone">완료</button>`;
+  document.getElementById('btnCopyDone').addEventListener('click', () => {
+    copySrc = null; updateCopyBar(); paintCalendar();
+  });
+  document.getElementById('btnRepeat').addEventListener('click', async () => {
+    const n = parseInt(prompt('몇 주 동안 같은 요일에 반복할까요? (예: 4)', '4'));
+    if(!n || n < 1 || n > 12){ showToast('1~12 사이 숫자를 입력해주세요'); return; }
+    let total = 0;
+    for(let k = 1; k <= n; k++) total += await pasteTo(addDays(copySrc, 7*k), true);
+    showToast(`${n}주 반복 완료 — ${total}칸 만들었어요 ✓`);
+    copySrc = null; updateCopyBar();
+  });
+}
+
+async function pasteTo(targetDate, silent){
+  const times = (groupByDate()[copySrc] || []).map(s => s.time);
+  const exist = new Set(slotList.map(s => s.id));
+  let made = 0;
+  try{
+    for(const t of times){
+      const id = `${targetDate}_${t}`;
+      if(exist.has(id)) continue;
+      await setDoc(doc(db,'counsel_slots',id), {
+        date: targetDate, time: t, taken: false, createdAt: new Date().toISOString()
+      });
+      made++;
+    }
+    if(!silent) showToast(made ? `${fmtDate(targetDate)}에 ${made}칸 붙여넣기 ✓` : '모두 이미 있는 시간이에요');
+  }catch(e){ showToast('복사 실패: ' + e.message); }
+  return made;
+}
+
+function attachTeacherCal(){
+  // 복사 시작 버튼
+  document.querySelectorAll('.btn-copy').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      copySrc = b.dataset.copy;
+      updateCopyBar(); paintCalendar();
+    });
+  });
+  // 셀 클릭: 복사 모드면 붙여넣기, 아니면 생성 패널에 날짜 채우기
+  document.querySelectorAll('.cal-cell[data-date]').forEach(cell => {
+    cell.addEventListener('click', async e => {
+      if(e.target.closest('.slot-del') || e.target.closest('.btn-copy')) return;
+      const date = cell.dataset.date;
+      if(copySrc){
+        if(date !== copySrc) await pasteTo(date, false);
+      }else{
+        const inp = document.getElementById('inDate');
+        if(inp){ inp.value = date; showToast(`${fmtDate(date)} 선택됨 — 위에서 시간을 만들어보세요`); }
+      }
+    });
+  });
+  // 삭제
+  document.querySelectorAll('.slot-del').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      if(btn.dataset.taken === '1' && !confirm('이미 학생이 신청한 시간입니다. 정말 삭제할까요?')) return;
+      try{
+        await deleteDoc(doc(db,'counsel_resv',id)).catch(()=>{});
+        await deleteDoc(doc(db,'counsel_slots',id));
+        showToast('삭제했어요 ✓');
+      }catch(err){ showToast('삭제 실패: ' + err.message); }
+    });
+  });
+}
+
+// ── 학생: 신청 / 취소 (선착순 안전장치) ───────────────────────
+async function reserveSlot(s){
+  await runTransaction(db, async tx => {
+    const ref = doc(db,'counsel_slots',s.id);
+    const snap = await tx.get(ref);
+    if(!snap.exists()) throw new Error('선생님이 삭제한 시간이에요');
+    if(snap.data().taken) throw new Error('앗, 방금 다른 친구가 먼저 신청했어요 😅');
+    tx.update(ref, { taken: true });
+    tx.set(doc(db,'counsel_resv',s.id), {
+      date: s.date, time: s.time,
+      uid: currentUser.uid, studentId: userProfile.studentId,
+      name: userProfile.name, createdAt: new Date().toISOString()
+    });
+  });
+}
+async function cancelSlot(s){
+  await runTransaction(db, async tx => {
+    const ref = doc(db,'counsel_slots',s.id);
+    const snap = await tx.get(ref);
+    if(snap.exists()) tx.update(ref, { taken: false });
+    tx.delete(doc(db,'counsel_resv',s.id));
+  });
+}
+
+function attachStudentCal(){
+  document.querySelectorAll('.sbtn[data-id]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const s = slotList.find(x => x.id === btn.dataset.id);
+      if(!s) return;
+      if(btn.dataset.act === 'reserve'){
+        if(!confirm(`${fmtDate(s.date)} ${s.time}에 상담을 신청할까요?`)) return;
+        try{
+          await reserveSlot(s);
+          myResvIds.add(s.id);
+          showToast(`${fmtDate(s.date)} ${s.time} 신청 완료 ✓`);
+        }catch(e){ showToast(e.message.includes('먼저')||e.message.includes('삭제') ? e.message : '신청 실패: ' + e.message, 3200); }
+      }else{
+        if(!confirm(`${fmtDate(s.date)} ${s.time} 신청을 취소할까요?`)) return;
+        try{
+          await cancelSlot(s);
+          myResvIds.delete(s.id);
+          showToast('취소했어요');
+        }catch(e){ showToast('취소 실패: ' + e.message); }
+      }
+    });
+  });
+}
+
+function paintMyList(){
+  const box = document.getElementById('myList');
+  if(!box) return;
+  const mine = slotList.filter(s => myResvIds.has(s.id));
+  if(!mine.length){ box.innerHTML = `<div class="my-empty">아직 신청한 상담이 없어요. 달력에서 초록빛 시간을 눌러 신청해 보세요!</div>`; return; }
+  box.innerHTML = mine.map(s => `
+    <div class="my-item">
+      <span>💬 ${fmtDate(s.date)} · ${s.time}</span>
+      <button class="btn-cancel" data-id="${s.id}">취소</button>
+    </div>`).join('');
+  box.querySelectorAll('.btn-cancel').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const s = slotList.find(x => x.id === btn.dataset.id);
+      if(!s || !confirm(`${fmtDate(s.date)} ${s.time} 신청을 취소할까요?`)) return;
+      try{ await cancelSlot(s); myResvIds.delete(s.id); showToast('취소했어요'); }
+      catch(e){ showToast('취소 실패: ' + e.message); }
+    });
+  });
 }
 
 // ── 공통 헤더 ────────────────────────────────────────────────
@@ -182,32 +506,9 @@ function headerHtml(){
   </div>`;
 }
 
-// ── 교사 화면: 상담 시간 설정 ─────────────────────────────────
-function teacherSlotListHtml(){
-  if(!slotList.length)
-    return `<div class="empty-state"><div class="em">🗓️</div>아직 만든 상담 시간이 없습니다.<br>위 패널에서 날짜와 시간을 추가해 보세요.</div>`;
-  const groups = groupByDate();
-  return Object.keys(groups).map(date => {
-    const slots = groups[date];
-    const takenCnt = slots.filter(s => s.taken).length;
-    const chips = slots.map(s => `
-      <span class="slot-chip${s.taken ? ' taken' : ''}">
-        ${s.time}
-        ${s.taken ? '<span class="slot-badge">예약됨</span>' : ''}
-        <button class="slot-del" data-id="${s.id}" data-taken="${s.taken ? 1 : 0}" title="삭제">✕</button>
-      </span>`).join('');
-    return `
-    <div class="date-group">
-      <div class="date-label">${fmtDate(date)}
-        <span class="date-count">${slots.length}칸 · 예약 ${takenCnt}</span>
-      </div>
-      <div class="slot-row">${chips}</div>
-    </div>`;
-  }).join('');
-}
-
-async function renderTeacherMain(){
-  await loadSlots();
+// ── 교사 메인 ────────────────────────────────────────────────
+function renderTeacherMain(){
+  const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1;
   setApp(`
     ${headerHtml()}
     <div class="main-wrap">
@@ -215,7 +516,7 @@ async function renderTeacherMain(){
       <div class="admin-panel">
         <div class="admin-title">날짜와 시간을 정하면 시간 칸을 자동으로 만듭니다</div>
         <div class="admin-row">
-          <div class="field"><label>날짜</label>
+          <div class="field"><label>날짜 (달력 클릭으로도 선택)</label>
             <input class="admin-input" id="inDate" type="date"></div>
           <div class="field"><label>시작</label>
             <input class="admin-input" id="inStart" type="time" value="15:00"></div>
@@ -226,18 +527,18 @@ async function renderTeacherMain(){
           <button class="btn-admin" id="btnGen">+ 시간 만들기</button>
         </div>
         <div class="admin-hint">
-          예: 시작 15:00 · 종료 17:00 · 간격 20분 → 15:00, 15:20, 15:40, 16:00, 16:20, 16:40 여섯 칸이 생깁니다.
-          한 칸만 추가하려면 종료를 비워두고 시작 시각만 넣으세요. 이미 있는 시간은 건너뜁니다.
+          한 칸만 추가하려면 종료를 비워두세요. 이미 있는 시간은 건너뜁니다.
+          날짜의 📋를 누르면 그 날의 시간을 다른 날짜로 복사하거나 매주 반복할 수 있어요.
         </div>
+        <div class="copy-bar" id="copyBar" style="display:none"></div>
       </div>
 
-      <div class="section-title">📋 만든 상담 시간</div>
-      <div id="slotArea">${teacherSlotListHtml()}</div>
+      <div class="section-title">📅 상담 시간표 <span style="font-weight:400;text-transform:none;letter-spacing:0">— 예약되면 학생 이름이 표시됩니다 (실시간)</span></div>
+      <div id="calArea"></div>
     </div>
   `);
   document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
 
-  // 시간 자동 생성
   document.getElementById('btnGen').addEventListener('click', async () => {
     const date = document.getElementById('inDate').value;
     const start = document.getElementById('inStart').value;
@@ -247,70 +548,54 @@ async function renderTeacherMain(){
     if(!start){ showToast('시작 시각을 입력해주세요'); return; }
     if(!gap || gap < 5){ showToast('간격은 5분 이상으로 해주세요'); return; }
 
-    // 만들 시각 목록 계산
     let times = [];
-    if(!end){
-      times = [start]; // 종료가 비어 있으면 한 칸만
-    }else{
+    if(!end){ times = [start]; }
+    else{
       if(toMin(end) <= toMin(start)){ showToast('종료 시각이 시작보다 늦어야 합니다'); return; }
       for(let m = toMin(start); m + gap <= toMin(end); m += gap) times.push(toTime(m));
       if(!times.length) times = [start];
     }
     if(times.length > 40){ showToast('한 번에 40칸까지만 만들 수 있어요'); return; }
 
-    // 이미 있는 시간은 건너뛰고 저장
     const exist = new Set(slotList.map(s => s.id));
     let made = 0;
     try{
-      for(const t of times){
-        const id = `${date}_${t}`;
+      for(const tm of times){
+        const id = `${date}_${tm}`;
         if(exist.has(id)) continue;
         await setDoc(doc(db,'counsel_slots',id), {
-          date, time: t, taken: false, createdAt: new Date().toISOString()
+          date, time: tm, taken: false, createdAt: new Date().toISOString()
         });
         made++;
       }
       showToast(made ? `${fmtDate(date)}에 ${made}칸 만들었어요 ✓` : '모두 이미 있는 시간이에요');
-      await loadSlots();
-      document.getElementById('slotArea').innerHTML = teacherSlotListHtml();
-      attachDelete();
+      const [y,m] = date.split('-').map(Number); viewY = y; viewM = m;
     }catch(e){ showToast('저장 실패: ' + e.message); }
   });
 
-  attachDelete();
+  startWatch(); // 실시간 감시 시작 → 달력이 자동으로 그려짐
 }
 
-// 삭제 버튼 연결
-function attachDelete(){
-  document.querySelectorAll('.slot-del').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      const taken = btn.dataset.taken === '1';
-      if(taken && !confirm('이미 학생이 신청한 시간입니다. 정말 삭제할까요?')) return;
-      try{
-        await deleteDoc(doc(db,'counsel_slots',id));
-        showToast('삭제했어요 ✓');
-        await loadSlots();
-        document.getElementById('slotArea').innerHTML = teacherSlotListHtml();
-        attachDelete();
-      }catch(e){ showToast('삭제 실패: ' + e.message); }
-    });
-  });
-}
-
-// ── 학생 화면 (3단계에서 선착순 신청 기능이 들어갈 자리) ──────
-function renderStudentMain(){
+// ── 학생 메인 ────────────────────────────────────────────────
+async function renderStudentMain(){
+  const t = new Date(); viewY = t.getFullYear(); viewM = t.getMonth()+1;
+  await loadMyResv();
   setApp(`
     ${headerHtml()}
     <div class="main-wrap">
-      <div class="placeholder">
-        <div class="em">🙋</div>
-        <div class="big">${userProfile.name} 학생, 안녕하세요!</div>
-        여기에 선생님이 열어둔 상담 시간 중에서 골라 신청하는 화면이 들어갑니다. (3단계)
+      <div class="section-title" style="margin-top:0">📅 상담 시간표</div>
+      <div class="legend">
+        <span><i class="dot free"></i> 신청 가능 (누르면 신청)</span>
+        <span><i class="dot mine"></i> 내 예약 (누르면 취소)</span>
+        <span><i class="dot other"></i> 예약됨</span>
       </div>
+      <div id="calArea"></div>
+      <div class="section-title">🙋 내가 신청한 상담</div>
+      <div class="my-list" id="myList"></div>
     </div>
   `);
   document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
+  startWatch();
 }
 
 // ── 로그인 화면 ───────────────────────────────────────────────
@@ -355,16 +640,15 @@ function renderUnregistered(email){
 
 // ── 로그인 상태 감시 ──────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
-  if(!user){ currentUser = null; userProfile = null; renderLogin(); return; }
+  if(unsubSlots){ unsubSlots(); unsubSlots = null; }
+  if(!user){ currentUser = null; userProfile = null; copySrc = null; renderLogin(); return; }
   currentUser = user;
 
-  // 교사
   if(isTeacher(user)){
     userProfile = { role:'teacher' };
     renderTeacherMain(); return;
   }
 
-  // 학생: 미라클 6월과 같은 명단에서 이메일로 찾기
   const student = await findByEmail(user.email);
   if(!student){ renderUnregistered(user.email); return; }
 
