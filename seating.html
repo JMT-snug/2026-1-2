@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1학년 2반 자리 선택 🪑</title>
+<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@300;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#C2410C; --glow:#FB923C; --accent:#38BDF8;
+  --green:#10B981; --red:#EF4444;
+  --bg:#171210; --surface:#241C18; --surface2:#2E2420;
+  --border:rgba(255,255,255,0.08);
+  --text:#FFF3EA; --muted:#A08C80;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── Loading ── */
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;color:var(--muted);}
+.spinner{width:48px;height:48px;border:3px solid rgba(251,146,60,0.2);border-top-color:var(--glow);border-radius:50%;animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Login ── */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 30% 20%,rgba(251,146,60,0.13) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(56,189,248,0.08) 0%,transparent 60%),var(--bg);padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:56px 48px;text-align:center;max-width:400px;width:100%;position:relative;overflow:hidden;}
+.login-card::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(251,146,60,0.22) 0%,transparent 70%);pointer-events:none;}
+.login-icon{font-size:64px;margin-bottom:20px;}
+.login-title{font-family:'Gmarket Sans',sans-serif;font-size:32px;font-weight:700;background:linear-gradient(135deg,#FED7AA,#FB923C,#38BDF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
+.login-sub{font-size:14px;color:var(--muted);margin-bottom:40px;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:14px;color:var(--text);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.25s;font-family:'Noto Sans KR',sans-serif;}
+.btn-google:hover{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.4);transform:translateY(-2px);}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#9A3412);color:white;border:none;border-radius:12px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%;font-family:'Noto Sans KR',sans-serif;transition:all 0.2s;}
+
+/* ── Header ── */
+.header{background:rgba(36,28,24,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;}
+.header-title{font-family:'Gmarket Sans',sans-serif;font-size:18px;font-weight:700;}
+.header-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(251,146,60,0.5);}
+.user-name{font-size:13px;color:var(--muted);}
+.badge-teacher{background:linear-gradient(135deg,#F59E0B,#EF4444);color:white;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:900;letter-spacing:0.5px;}
+.btn-signout{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:12px;transition:all 0.2s;font-family:'Noto Sans KR',sans-serif;}
+.btn-signout:hover{border-color:var(--red);color:var(--red);}
+
+/* ── Main ── */
+.main-wrap{max-width:1000px;margin:0 auto;padding:32px 24px 80px;}
+.section-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;margin-top:36px;}
+
+/* ── Admin panel ── */
+.admin-panel{background:rgba(245,158,11,0.07);border:1px dashed rgba(245,158,11,0.4);border-radius:18px;padding:20px 22px;}
+.admin-title{font-size:12px;font-weight:900;color:#FBBF24;margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;}
+.admin-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:700;color:var(--muted);}
+.admin-input{background:rgba(255,255,255,0.06);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;transition:border-color 0.2s;color-scheme:dark;}
+.admin-input:focus{outline:none;border-color:#FBBF24;}
+.btn-admin{background:linear-gradient(135deg,#F59E0B,#D97706);color:white;border:none;border-radius:10px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;}
+.btn-admin.ghost{background:transparent;border:1px solid rgba(245,158,11,0.45);color:#FBBF24;}
+.btn-admin.danger{background:transparent;border:1px solid rgba(239,68,68,0.5);color:#FCA5A5;}
+.admin-hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
+
+/* 모드 선택 (닫힘 / 예약 / 즉시) */
+.mode-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.mode-tab{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all 0.2s;}
+.mode-tab:hover{border-color:rgba(245,158,11,0.5);color:var(--text);}
+.mode-tab.on{background:rgba(245,158,11,0.18);border-color:#FBBF24;color:#FDE68A;}
+
+/* ── 상태 배너 ── */
+.state-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:14px;padding:14px 18px;font-size:14px;font-weight:700;margin-bottom:18px;border:1px solid;}
+.state-bar.open{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.45);color:#6EE7B7;}
+.state-bar.before{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.4);color:#7DD3FC;}
+.state-bar.closed{background:rgba(255,255,255,0.04);border-color:var(--border);color:var(--muted);}
+.state-bar.mine{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.45);color:#FDBA74;}
+.state-em{font-size:22px;}
+.countdown{font-family:'Gmarket Sans',sans-serif;font-size:16px;letter-spacing:0.5px;}
+
+/* ── 교실 ── */
+.room-scroll{overflow-x:auto;padding-bottom:6px;}
+.room{min-width:560px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 20px 18px;}
+.front-row{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.front-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(251,146,60,0.45),transparent);}
+.podium{background:linear-gradient(135deg,rgba(251,146,60,0.22),rgba(194,65,12,0.28));border:1px solid rgba(251,146,60,0.5);border-radius:12px;padding:12px 30px;font-family:'Gmarket Sans',sans-serif;font-size:14px;font-weight:700;color:#FED7AA;white-space:nowrap;}
+.front-tag{font-size:11px;font-weight:900;letter-spacing:3px;color:rgba(251,146,60,0.75);}
+.back-tag{text-align:center;font-size:11px;font-weight:900;letter-spacing:3px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);}
+
+.blocks{display:flex;justify-content:center;gap:30px;margin-top:20px;}
+.block{display:flex;flex-direction:column;gap:8px;}
+.block-title{text-align:center;font-size:12px;font-weight:900;color:var(--glow);letter-spacing:1px;}
+.seat-grid{display:grid;gap:8px;}
+.row-tag{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--muted);font-family:'Gmarket Sans',sans-serif;width:30px;}
+
+/* 좌석 */
+.seat{width:96px;height:74px;border-radius:12px;border:1px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;text-align:center;transition:transform 0.15s,background 0.15s,border-color 0.15s;position:relative;overflow:hidden;}
+.seat .code{position:absolute;top:4px;left:6px;font-size:9px;font-weight:900;color:rgba(255,255,255,0.28);letter-spacing:0.5px;}
+.seat .nm{font-size:14px;font-weight:900;line-height:1.2;max-width:86px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.seat .sub{font-size:10px;font-weight:700;opacity:0.75;}
+.seat.free{background:rgba(255,255,255,0.04);border-color:var(--border);color:var(--muted);}
+.seat.free.pick{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.5);color:#6EE7B7;cursor:pointer;}
+.seat.free.pick:hover{background:rgba(16,185,129,0.26);transform:translateY(-2px);}
+.seat.taken{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14);color:var(--muted);}
+.seat.named{background:rgba(251,146,60,0.13);border-color:rgba(251,146,60,0.42);color:#FDBA74;}
+.seat.mine{background:rgba(56,189,248,0.16);border-color:rgba(56,189,248,0.6);color:#7DD3FC;box-shadow:0 0 0 2px rgba(56,189,248,0.18);}
+.seat.off{background:repeating-linear-gradient(45deg,rgba(255,255,255,0.03),rgba(255,255,255,0.03) 6px,transparent 6px,transparent 12px);border-color:var(--border);color:rgba(255,255,255,0.22);}
+.seat.tclick{cursor:pointer;}
+.seat.tclick:hover{border-color:var(--glow);}
+.seat.movetarget{outline:2px dashed rgba(56,189,248,0.6);outline-offset:2px;}
+
+/* ── 범례 / 목록 ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:14px 2px 0;}
+.legend span{display:flex;align-items:center;gap:6px;}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block;}
+.dot.free{background:rgba(16,185,129,0.45);}
+.dot.taken{background:rgba(255,255,255,0.16);}
+.dot.mine{background:rgba(56,189,248,0.6);}
+.dot.off{background:rgba(255,255,255,0.08);border:1px solid var(--border);}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;}
+.stat-row{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px;}
+.stat{display:flex;flex-direction:column;gap:2px;}
+.stat b{font-family:'Gmarket Sans',sans-serif;font-size:24px;color:var(--glow);}
+.stat span{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;}
+.chips{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--muted);}
+.chip.warn{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#FCA5A5;}
+.empty-note{font-size:13px;color:var(--muted);padding:6px 0;}
+
+/* ── Modal ── */
+.modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:400;padding:24px;}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:26px;max-width:380px;width:100%;}
+.modal-title{font-family:'Gmarket Sans',sans-serif;font-size:19px;font-weight:700;color:var(--glow);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.modal-acts{display:flex;flex-direction:column;gap:9px;}
+.m-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);border-radius:11px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:left;transition:all 0.2s;}
+.m-btn:hover{border-color:var(--glow);background:rgba(251,146,60,0.1);}
+.m-btn.danger:hover{border-color:var(--red);color:#FCA5A5;background:rgba(239,68,68,0.1);}
+.m-btn.close{text-align:center;color:var(--muted);}
+.m-sel{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:11px;padding:12px;font-size:14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;width:100%;color-scheme:dark;}
+
+/* ── 인쇄 (화면에서는 숨김) ── */
+#printRoot{display:none;}
+@media print{
+  html,body{background:#fff !important;color:#111 !important;}
+  body > *{display:none !important;}
+  body > #printRoot{display:block !important;}
+  #printRoot{font-family:'Noto Sans KR',sans-serif;}
+  .p-head{text-align:center;margin-bottom:5mm;}
+  .p-title{font-size:19pt;font-weight:900;letter-spacing:0.5pt;}
+  .p-meta{font-size:9pt;color:#555;margin-top:2mm;line-height:1.5;}
+  .p-podium{margin:4mm auto;width:62mm;text-align:center;border:1.5pt solid #222;border-radius:2mm;padding:3mm 0;font-size:11pt;font-weight:900;background:#ebebeb;}
+  .p-edge{text-align:center;font-size:8.5pt;font-weight:900;letter-spacing:2pt;color:#777;margin:3mm 0;}
+  .p-blocks{display:flex;gap:9mm;justify-content:center;align-items:flex-start;}
+  .p-block{flex:1;max-width:125mm;}
+  .p-btitle{text-align:center;font-size:10pt;font-weight:900;margin-bottom:2mm;}
+  .p-grid{display:grid;gap:2.5mm;}
+  .p-rtag{display:flex;align-items:center;justify-content:center;font-size:8pt;font-weight:900;color:#777;}
+  .p-seat{border:1pt solid #333;border-radius:2mm;min-height:17mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8mm;padding:1mm;text-align:center;break-inside:avoid;}
+  .p-seat .pn{font-size:13pt;font-weight:900;line-height:1.2;}
+  .p-seat .ps{font-size:8pt;color:#666;}
+  .p-seat.pempty{border-style:dashed;border-color:#aaa;}
+  .p-seat.pempty .ps{color:#aaa;}
+  .p-seat.poff{background:#e6e6e6;border-style:dashed;border-color:#aaa;}
+  .p-foot{margin-top:6mm;padding-top:3mm;border-top:0.8pt solid #bbb;font-size:9pt;color:#333;line-height:1.7;}
+}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(36,28,24,0.96);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);color:var(--text);border-radius:14px;padding:12px 24px;font-size:14px;font-weight:700;z-index:500;opacity:0;transition:opacity 0.3s,transform 0.3s;max-width:88vw;text-align:center;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="loading-screen"><div class="spinner"></div><div style="font-size:14px">로딩 중...</div></div>
+</div>
+<div id="modalRoot"></div>
+<div id="printRoot"></div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query,
+         orderBy, where, onSnapshot, runTransaction }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── 설정 (미라클 6월 · 상담 신청과 동일한 Firebase 프로젝트) ────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBCZ8zOt6vy85QeuM2tmc1l0SbvLCgI4DI",
+  authDomain: "project-7495985191493746478.firebaseapp.com",
+  projectId: "project-7495985191493746478",
+  storageBucket: "project-7495985191493746478.firebasestorage.app",
+  messagingSenderId: "677977589186",
+  appId: "1:677977589186:web:4e7eebc230be8dad2c825b"
+};
+
+// 교사 이메일 목록 (추가 가능)
+const TEACHER_EMAILS = [
+  'rapidwing@snu-g.ms.kr',
+];
+
+// 기본 배치: 2분단 × 4줄 × 2열 = 16석
+const DEFAULT_CFG = {
+  blocks: 2, rows: 4, cols: 2,
+  mode: 'closed',          // closed(닫힘) | scheduled(예약) | open(즉시 열림)
+  openAt: '', closeAt: '',
+  published: false,        // true면 학생도 누가 어디 앉는지 볼 수 있음
+  disabled: []             // 사용 불가 좌석 id 목록
+};
+const MAX_BLOCKS = 4, MAX_ROWS = 8, MAX_COLS = 4;
+
+// ── Firebase 초기화 ──────────────────────────────────────────
+const fbApp = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+const gProv = new GoogleAuthProvider();
+
+const cfgRef = doc(db, 'seating', 'config');
+const seatCol = collection(db, 'seating_seats');   // 좌석 id → 앉은 학생
+const mineCol = collection(db, 'seating_mine');    // 학생 id → 좌석 (1인 1석 보장)
+
+let currentUser = null, userProfile = null;
+let cfg = { ...DEFAULT_CFG };
+let seatMap = {};            // seatId → { studentId, number, name, uid, createdAt, byTeacher }
+let studentList = [];
+let mySeatId = null;         // 학생 본인 좌석
+let unsubCfg = null, unsubSeats = null;
+let tickTimer = null, lastState = null;
+let moveFrom = null;         // 교사: 자리 옮기기 원본
+let busy = false;            // 중복 클릭 방지
+
+// ── 유틸 ─────────────────────────────────────────────────────
+const isTeacher = u => u?.email && TEACHER_EMAILS.includes(u.email.toLowerCase());
+const pad = n => String(n).padStart(2, '0');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let toastT = null;
+function showToast(msg, dur = 2600){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), dur);
+}
+function setApp(h){ document.getElementById('app').innerHTML = h; }
+
+const sid = (b, r, c) => `${b}-${r}-${c}`;
+const seatName = (b, r, c) => `${b}분단 ${r}줄 ${c}번`;
+const seatNameOf = id => { const [b,r,c] = id.split('-'); return seatName(b,r,c); };
+const isOff = id => (cfg.disabled || []).includes(id);
+
+function allSeatIds(){
+  const out = [];
+  for(let b = 1; b <= cfg.blocks; b++)
+    for(let r = 1; r <= cfg.rows; r++)
+      for(let c = 1; c <= cfg.cols; c++) out.push(sid(b, r, c));
+  return out;
+}
+const usableCount = () => allSeatIds().filter(id => !isOff(id)).length;
+const takenCount = () => Object.keys(seatMap).length;
+
+// datetime-local 문자열 → Date (시간대 없이 로컬로 해석)
+const parseLocal = s => (s && s.length >= 16) ? new Date(s) : null;
+function fmtWhen(s){
+  const d = parseLocal(s);
+  if(!d || isNaN(d)) return '-';
+  const day = ['일','월','화','수','목','금','토'][d.getDay()];
+  return `${d.getMonth()+1}월 ${d.getDate()}일(${day}) ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function fmtLeft(ms){
+  if(ms < 0) ms = 0;
+  const t = Math.floor(ms / 1000);
+  const d = Math.floor(t / 86400), h = Math.floor(t % 86400 / 3600);
+  const m = Math.floor(t % 3600 / 60), s = t % 60;
+  if(d > 0) return `${d}일 ${h}시간 ${m}분`;
+  if(h > 0) return `${h}:${pad(m)}:${pad(s)}`;
+  return `${m}분 ${pad(s)}초`;
+}
+
+// 지금 학생이 자리를 고를 수 있는 상태인가
+function seatingState(){
+  if(cfg.mode === 'open') return 'open';
+  if(cfg.mode === 'scheduled'){
+    const now = Date.now();
+    const o = parseLocal(cfg.openAt), c = parseLocal(cfg.closeAt);
+    if(o && !isNaN(o) && now < o.getTime()) return 'before';
+    if(c && !isNaN(c) && now > c.getTime()) return 'after';
+    return 'open';
+  }
+  return 'closed';
+}
+const STATE_LABEL = { open:'선택 진행 중', before:'선택 대기 중', after:'선택 마감', closed:'선택 닫힘' };
+
+// ── Firestore 읽기 ───────────────────────────────────────────
+async function loadStudents(){
+  try{
+    const s = await getDocs(query(collection(db,'students'), orderBy('number')));
+    studentList = s.docs.map(d => ({ id:d.id, ...d.data() }));
+  }catch{ studentList = []; }
+  return studentList;
+}
+async function findByEmail(email){
+  try{
+    const s = await getDocs(query(collection(db,'students'), where('email','==',email.toLowerCase())));
+    if(s.empty) return null;
+    const d = s.docs[0]; return { id:d.id, ...d.data() };
+  }catch{ return null; }
+}
+async function loadCfg(){
+  try{
+    const s = await getDoc(cfgRef);
+    cfg = s.exists() ? { ...DEFAULT_CFG, ...s.data() } : { ...DEFAULT_CFG };
+  }catch{ cfg = { ...DEFAULT_CFG }; }
+  return cfg;
+}
+async function saveCfg(patch){
+  cfg = { ...cfg, ...patch };
+  await setDoc(cfgRef, cfg);
+}
+
+// 실시간 감시: 설정 · 좌석이 바뀌면 화면을 다시 그림
+function startWatch(){
+  stopWatch();
+  unsubCfg = onSnapshot(cfgRef, snap => {
+    cfg = snap.exists() ? { ...DEFAULT_CFG, ...snap.data() } : { ...DEFAULT_CFG };
+    repaint();
+  });
+  unsubSeats = onSnapshot(seatCol, snap => {
+    seatMap = {};
+    snap.docs.forEach(d => seatMap[d.id] = d.data());
+    mySeatId = null;
+    if(userProfile?.role === 'student'){
+      for(const [id, v] of Object.entries(seatMap))
+        if(v.studentId === userProfile.studentId){ mySeatId = id; break; }
+    }
+    repaint();
+  });
+  clearInterval(tickTimer);
+  tickTimer = setInterval(() => {
+    const st = seatingState();
+    if(st !== lastState){ lastState = st; repaint(); return; }
+    paintCountdown();
+  }, 1000);
+}
+function stopWatch(){
+  if(unsubCfg){ unsubCfg(); unsubCfg = null; }
+  if(unsubSeats){ unsubSeats(); unsubSeats = null; }
+  clearInterval(tickTimer); tickTimer = null;
+}
+
+// ── 교실 그리기 ──────────────────────────────────────────────
+function seatHtml(b, r, c, teacher){
+  const id = sid(b, r, c);
+  const occ = seatMap[id];
+  const off = isOff(id);
+  const mine = !teacher && mySeatId === id;
+  const canPick = !teacher && seatingState() === 'open' && !mySeatId && !occ && !off;
+  // 이름을 보여주는 경우: 교사는 항상, 학생은 공개된 뒤에만
+  const showName = teacher || cfg.published;
+
+  let cls = 'seat', body = '';
+  if(off){
+    cls += ' off'; body = `<div class="sub">사용 불가</div>`;
+  }else if(occ){
+    if(mine){
+      cls += ' mine';
+      body = `<div class="nm">${esc(occ.name)}</div><div class="sub">내 자리 ✓</div>`;
+    }else if(showName){
+      cls += ' named';
+      body = `<div class="nm">${esc(occ.name)}</div><div class="sub">${occ.number ? occ.number + '번' : ''}</div>`;
+    }else{
+      cls += ' taken';
+      body = `<div class="sub">선택됨</div>`;
+    }
+  }else{
+    cls += ' free';
+    if(canPick){ cls += ' pick'; body = `<div class="nm">빈자리</div><div class="sub">누르면 선택</div>`; }
+    else body = `<div class="sub">빈자리</div>`;
+  }
+  if(teacher) cls += ' tclick';
+  if(teacher && moveFrom && moveFrom !== id && !occ && !off) cls += ' movetarget';
+
+  const act = canPick ? 'pick' : (teacher ? 'admin' : (mine ? 'mine' : ''));
+  return `<div class="${cls}" data-id="${id}" data-act="${act}" title="${seatName(b,r,c)}">
+    <span class="code">${c}</span>${body}
+  </div>`;
+}
+
+function roomHtml(teacher){
+  const blocks = [];
+  for(let b = 1; b <= cfg.blocks; b++){
+    const rows = [];
+    for(let r = 1; r <= cfg.rows; r++){
+      rows.push(`<div class="row-tag">${r}줄</div>`);
+      for(let c = 1; c <= cfg.cols; c++) rows.push(seatHtml(b, r, c, teacher));
+    }
+    blocks.push(`<div class="block">
+      <div class="block-title">${b}분단</div>
+      <div class="seat-grid" style="grid-template-columns:30px repeat(${cfg.cols},96px)">${rows.join('')}</div>
+    </div>`);
+  }
+  return `<div class="room-scroll"><div class="room">
+    <div class="front-row">
+      <span class="front-tag">앞</span><div class="front-line"></div>
+      <div class="podium">🧑‍🏫 교탁</div>
+      <div class="front-line"></div><span class="front-tag">앞</span>
+    </div>
+    <div class="blocks">${blocks.join('')}</div>
+    <div class="back-tag">교실 뒤</div>
+  </div></div>`;
+}
+
+function paintRoom(){
+  const area = document.getElementById('roomArea');
+  if(!area) return;
+  const teacher = userProfile?.role === 'teacher';
+  area.innerHTML = roomHtml(teacher);
+  area.querySelectorAll('.seat').forEach(el => {
+    const act = el.dataset.act;
+    if(!act) return;
+    el.addEventListener('click', () => {
+      if(act === 'pick') studentPick(el.dataset.id);
+      else if(act === 'mine') showToast('한 번 선택한 자리는 옮길 수 없어요. 변경이 필요하면 선생님께 말씀드리세요.', 3600);
+      else if(act === 'admin') teacherSeatClick(el.dataset.id);
+    });
+  });
+}
+
+function paintCountdown(){
+  const el = document.getElementById('cdown');
+  if(!el) return;
+  const st = seatingState();
+  if(st === 'before'){
+    const o = parseLocal(cfg.openAt);
+    el.textContent = o ? `${fmtLeft(o.getTime() - Date.now())} 후 시작` : '';
+  }else if(st === 'open' && cfg.mode === 'scheduled' && cfg.closeAt){
+    const c = parseLocal(cfg.closeAt);
+    el.textContent = c ? `마감까지 ${fmtLeft(c.getTime() - Date.now())}` : '';
+  }else el.textContent = '';
+}
+
+// ── 학생: 상태 안내 ──────────────────────────────────────────
+function paintNotice(){
+  const box = document.getElementById('noticeArea');
+  if(!box) return;
+  const st = seatingState();
+  const left = usableCount() - takenCount();
+
+  if(mySeatId){
+    box.innerHTML = `<div class="state-bar mine">
+      <span class="state-em">🪑</span>
+      <span>내 자리는 <b style="color:#FFF3EA">${seatNameOf(mySeatId)}</b> 입니다 — 한 번 선택한 자리는 바꿀 수 없어요.</span>
+    </div>`;
+    return;
+  }
+  if(st === 'before'){
+    box.innerHTML = `<div class="state-bar before">
+      <span class="state-em">⏳</span>
+      <span>선택 시작: <b style="color:#FFF3EA">${fmtWhen(cfg.openAt)}</b></span>
+      <span class="countdown" id="cdown"></span>
+    </div>`;
+    paintCountdown(); return;
+  }
+  if(st === 'open'){
+    box.innerHTML = `<div class="state-bar open">
+      <span class="state-em">🏃</span>
+      <span>지금 선택할 수 있어요 — 남은 자리 <b style="color:#FFF3EA">${left}</b>개</span>
+      <span class="countdown" id="cdown"></span>
+    </div>`;
+    paintCountdown(); return;
+  }
+  box.innerHTML = `<div class="state-bar closed">
+    <span class="state-em">${st === 'after' ? '🔒' : '💤'}</span>
+    <span>${st === 'after' ? '자리 선택이 마감되었습니다.' : '아직 자리 선택이 열리지 않았습니다. 선생님이 열어주면 이 화면에서 바로 고를 수 있어요.'}</span>
+  </div>`;
+}
+
+// ── 교사: 상태 배너 · 현황 ───────────────────────────────────
+function paintTeacherState(){
+  const box = document.getElementById('tStateArea');
+  if(!box) return;
+  const st = seatingState();
+  const cls = st === 'open' ? 'open' : st === 'before' ? 'before' : 'closed';
+  const when = cfg.mode === 'scheduled'
+    ? `${fmtWhen(cfg.openAt)} ~ ${fmtWhen(cfg.closeAt)}`
+    : cfg.mode === 'open' ? '시간 제한 없이 열려 있음' : '학생 선택 불가';
+  box.innerHTML = `<div class="state-bar ${cls}">
+    <span class="state-em">${st === 'open' ? '🏃' : st === 'before' ? '⏳' : '🔒'}</span>
+    <span>${STATE_LABEL[st]} · ${when}</span>
+    <span class="countdown" id="cdown"></span>
+    <span class="chip ${cfg.published ? '' : 'warn'}">${cfg.published ? '👀 결과 공개 중' : '🙈 비공개(익명)'}</span>
+  </div>`;
+  paintCountdown();
+}
+
+function paintStatus(){
+  const box = document.getElementById('statusArea');
+  if(!box) return;
+  const seated = new Set(Object.values(seatMap).map(v => v.studentId));
+  const left = studentList.filter(s => !seated.has(s.id));
+  const total = usableCount();
+  const shortage = studentList.length - total;
+
+  box.innerHTML = `
+    <div class="stat-row">
+      <div class="stat"><b>${takenCount()}</b><span>선택 완료</span></div>
+      <div class="stat"><b>${total - takenCount()}</b><span>남은 자리</span></div>
+      <div class="stat"><b>${total}</b><span>사용 가능 좌석</span></div>
+      <div class="stat"><b>${studentList.length}</b><span>학생 수</span></div>
+    </div>
+    ${shortage > 0 ? `<div class="chips" style="margin-bottom:12px"><span class="chip warn">⚠️ 좌석이 ${shortage}개 부족합니다 — 위에서 줄·열 수를 늘려주세요</span></div>` : ''}
+    <div style="font-size:12px;font-weight:900;color:var(--muted);letter-spacing:1px;margin-bottom:8px">아직 선택하지 않은 학생 (${left.length}명)</div>
+    ${left.length
+      ? `<div class="chips">${left.map(s => `<span class="chip">${s.number}. ${esc(s.name)}</span>`).join('')}</div>`
+      : `<div class="empty-note">모든 학생이 자리를 선택했습니다 ✓</div>`}
+  `;
+}
+
+function repaint(){
+  if(!userProfile) return;
+  lastState = seatingState();
+  if(userProfile.role === 'teacher'){ paintTeacherState(); paintRoom(); paintStatus(); }
+  else { paintNotice(); paintRoom(); }
+}
+
+// ── 학생: 자리 선택 (선착순 안전장치) ────────────────────────
+async function studentPick(seatId){
+  if(busy) return;
+  if(mySeatId){ showToast('이미 자리를 선택했어요.'); return; }
+  if(!confirm(`${seatNameOf(seatId)}를 선택할까요?\n\n한 번 선택하면 다시 바꿀 수 없습니다.`)) return;
+
+  busy = true;
+  try{
+    await runTransaction(db, async tx => {
+      const seatD = doc(seatCol, seatId);
+      const mineD = doc(mineCol, userProfile.studentId);
+      const [seatS, mineS] = await Promise.all([tx.get(seatD), tx.get(mineD)]);
+      if(mineS.exists()) throw new Error('이미 자리를 선택했어요');
+      if(seatS.exists()) throw new Error('앗, 방금 다른 친구가 먼저 선택했어요 😅');
+      if(isOff(seatId)) throw new Error('선생님이 막아둔 자리예요');
+      if(seatingState() !== 'open') throw new Error('지금은 선택할 수 있는 시간이 아니에요');
+      const rec = {
+        studentId: userProfile.studentId, number: userProfile.number || null,
+        name: userProfile.name, uid: currentUser.uid,
+        createdAt: new Date().toISOString(), byTeacher: false
+      };
+      tx.set(seatD, rec);
+      tx.set(mineD, { seatId, ...rec });
+    });
+    mySeatId = seatId;
+    showToast(`${seatNameOf(seatId)} 선택 완료 ✓`, 3200);
+  }catch(e){
+    showToast(e.message.includes('먼저') || e.message.includes('이미') || e.message.includes('막아') || e.message.includes('시간')
+      ? e.message : '선택 실패: ' + e.message, 3600);
+  }finally{ busy = false; }
+}
+
+// ── 교사: 좌석 조정 ──────────────────────────────────────────
+function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+function openModal(title, sub, acts){
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-back" id="mBack"><div class="modal">
+      <div class="modal-title">${title}</div>
+      <div class="modal-sub">${sub}</div>
+      <div class="modal-acts">${acts}<button class="m-btn close" id="mClose">닫기</button></div>
+    </div></div>`;
+  document.getElementById('mClose').addEventListener('click', closeModal);
+  document.getElementById('mBack').addEventListener('click', e => { if(e.target.id === 'mBack') closeModal(); });
+}
+
+async function setSeat(seatId, student, byTeacher = true){
+  const rec = {
+    studentId: student.id, number: student.number ?? null, name: student.name,
+    uid: student.uid || null, createdAt: new Date().toISOString(), byTeacher
+  };
+  await setDoc(doc(seatCol, seatId), rec);
+  await setDoc(doc(mineCol, student.id), { seatId, ...rec });
+}
+async function clearSeat(seatId){
+  const occ = seatMap[seatId];
+  await deleteDoc(doc(seatCol, seatId));
+  if(occ?.studentId) await deleteDoc(doc(mineCol, occ.studentId)).catch(() => {});
+}
+
+function teacherSeatClick(seatId){
+  // 옮기기 진행 중이면, 누른 자리를 목적지로 사용
+  if(moveFrom){
+    if(moveFrom === seatId){ moveFrom = null; showToast('옮기기를 취소했어요'); paintRoom(); return; }
+    if(seatMap[seatId]){ showToast('이미 학생이 있는 자리예요'); return; }
+    if(isOff(seatId)){ showToast('사용 불가로 막아둔 자리예요'); return; }
+    (async () => {
+      const from = moveFrom, occ = seatMap[from];
+      moveFrom = null;
+      try{
+        await setSeat(seatId, { id:occ.studentId, number:occ.number, name:occ.name, uid:occ.uid }, true);
+        await deleteDoc(doc(seatCol, from));
+        showToast(`${occ.name} → ${seatNameOf(seatId)} 이동 완료 ✓`);
+      }catch(e){ showToast('이동 실패: ' + e.message); }
+    })();
+    return;
+  }
+
+  const occ = seatMap[seatId];
+  const off = isOff(seatId);
+  const nm = seatNameOf(seatId);
+
+  if(occ){
+    openModal(nm, `현재 <b style="color:#FDBA74">${esc(occ.name)}</b>${occ.number ? ` (${occ.number}번)` : ''} 학생이 선택한 자리입니다.`, `
+      <button class="m-btn" id="mMove">↔️ 다른 자리로 옮기기</button>
+      <button class="m-btn danger" id="mClear">🗑 이 자리 비우기 (선택 취소)</button>`);
+    document.getElementById('mMove').addEventListener('click', () => {
+      moveFrom = seatId; closeModal();
+      showToast(`${occ.name} 학생을 옮길 빈자리를 누르세요 (같은 자리를 다시 누르면 취소)`, 4000);
+      paintRoom();
+    });
+    document.getElementById('mClear').addEventListener('click', async () => {
+      if(!confirm(`${occ.name} 학생의 ${nm} 선택을 취소할까요?\n학생은 다시 선택할 수 있게 됩니다.`)) return;
+      closeModal();
+      try{ await clearSeat(seatId); showToast('자리를 비웠어요 ✓'); }
+      catch(e){ showToast('실패: ' + e.message); }
+    });
+    return;
+  }
+
+  if(off){
+    openModal(nm, '사용 불가로 막아둔 자리입니다.', `<button class="m-btn" id="mUnlock">🔓 사용 가능으로 되돌리기</button>`);
+    document.getElementById('mUnlock').addEventListener('click', async () => {
+      closeModal();
+      try{
+        await saveCfg({ disabled: (cfg.disabled || []).filter(x => x !== seatId) });
+        showToast('사용 가능으로 바꿨어요 ✓');
+      }catch(e){ showToast('실패: ' + e.message); }
+    });
+    return;
+  }
+
+  // 빈자리
+  const seated = new Set(Object.values(seatMap).map(v => v.studentId));
+  const pool = studentList.filter(s => !seated.has(s.id));
+  const opts = pool.length
+    ? `<select class="m-sel" id="mSel"><option value="">학생 선택...</option>${
+        pool.map(s => `<option value="${s.id}">${s.number}번 ${esc(s.name)}</option>`).join('')}</select>
+       <button class="m-btn" id="mAssign">✅ 이 자리에 배정</button>`
+    : `<div class="empty-note">배정할 수 있는 학생이 없습니다 (모두 자리가 있음).</div>`;
+  openModal(nm, '빈자리입니다. 학생을 직접 배정하거나, 아무도 못 쓰게 막을 수 있습니다.', `
+    ${opts}
+    <button class="m-btn danger" id="mLock">🚫 사용 불가로 막기</button>`);
+
+  const bA = document.getElementById('mAssign');
+  if(bA) bA.addEventListener('click', async () => {
+    const id = document.getElementById('mSel').value;
+    if(!id){ showToast('학생을 선택해주세요'); return; }
+    const st = studentList.find(s => s.id === id);
+    closeModal();
+    try{ await setSeat(seatId, st, true); showToast(`${st.name} → ${nm} 배정 완료 ✓`); }
+    catch(e){ showToast('배정 실패: ' + e.message); }
+  });
+  document.getElementById('mLock').addEventListener('click', async () => {
+    closeModal();
+    try{
+      await saveCfg({ disabled: [...new Set([...(cfg.disabled || []), seatId])] });
+      showToast('사용 불가로 막았어요 ✓');
+    }catch(e){ showToast('실패: ' + e.message); }
+  });
+}
+
+// ── 교사: 자리표 텍스트 (한글 문서 붙여넣기용) ───────────────
+function chartText(){
+  const lines = ['[ 교탁 · 교실 앞 ]'];
+  const head = [''];
+  for(let b = 1; b <= cfg.blocks; b++){
+    for(let c = 1; c <= cfg.cols; c++) head.push(`${b}분단-${c}`);
+  }
+  lines.push(head.join('\t'));
+  for(let r = 1; r <= cfg.rows; r++){
+    const row = [`${r}줄`];
+    for(let b = 1; b <= cfg.blocks; b++){
+      for(let c = 1; c <= cfg.cols; c++){
+        const id = sid(b, r, c), occ = seatMap[id];
+        row.push(isOff(id) ? 'X' : occ ? `${occ.number ?? ''}${occ.number ? '.' : ''}${occ.name}` : '-');
+      }
+    }
+    lines.push(row.join('\t'));
+  }
+  lines.push('[ 교실 뒤 ]');
+  return lines.join('\n');
+}
+async function copyChart(){
+  const txt = chartText();
+  try{ await navigator.clipboard.writeText(txt); showToast('자리표를 복사했어요 — 문서에 붙여넣기 하세요 ✓', 3200); }
+  catch{
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); showToast('자리표를 복사했어요 ✓'); }
+    catch{ showToast('복사 실패 — 브라우저에서 직접 선택해 복사해주세요'); }
+    ta.remove();
+  }
+}
+
+// ── 인쇄 ─────────────────────────────────────────────────────
+// mode: 'student' → 화면과 동일한 방향 (교탁이 위)
+//       'teacher'  → 교탁에서 학생을 바라본 방향 (교탁이 아래, 좌우·앞뒤 뒤집힘)
+function printSheetHtml(mode){
+  const tView = mode === 'teacher';
+  const showName = userProfile?.role === 'teacher' || cfg.published;
+  const seq = (n, rev) => { const a = []; for(let i = 1; i <= n; i++) a.push(i); return rev ? a.reverse() : a; };
+  const bOrder = seq(cfg.blocks, tView);
+  const rOrder = seq(cfg.rows, tView);
+  const cOrder = seq(cfg.cols, tView);
+
+  const blocksHtml = bOrder.map(b => {
+    const cells = [];
+    rOrder.forEach(r => {
+      cells.push(`<div class="p-rtag">${r}줄</div>`);
+      cOrder.forEach(c => {
+        const id = sid(b, r, c), occ = seatMap[id];
+        if(isOff(id))
+          cells.push(`<div class="p-seat poff"><div class="ps">사용 불가</div></div>`);
+        else if(occ)
+          cells.push(`<div class="p-seat"><div class="pn">${showName ? esc(occ.name) : '선택됨'}</div>${
+            showName && occ.number ? `<div class="ps">${occ.number}번</div>` : ''}</div>`);
+        else
+          cells.push(`<div class="p-seat pempty"><div class="ps">빈자리</div></div>`);
+      });
+    });
+    return `<div class="p-block"><div class="p-btitle">${b}분단</div>
+      <div class="p-grid" style="grid-template-columns:8mm repeat(${cfg.cols},1fr)">${cells.join('')}</div></div>`;
+  }).join('');
+
+  const podium = `<div class="p-podium">교탁 · 교실 앞</div>`;
+  const backEdge = `<div class="p-edge">교실 뒤</div>`;
+  const today = new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+  const dirNote = tView
+    ? '교사 시점 — 교탁에서 학생들을 바라본 방향입니다 (교탁이 아래, 앞뒤·좌우가 화면과 반대)'
+    : '학생 시점 — 교실 뒤에서 앞(교탁)을 바라본 방향입니다 (화면과 동일)';
+
+  // 교사용에는 아직 자리를 고르지 않은 학생 명단을 아래에 함께 인쇄
+  let foot = '';
+  if(tView && userProfile?.role === 'teacher'){
+    const seated = new Set(Object.values(seatMap).map(v => v.studentId));
+    const left = studentList.filter(s => !seated.has(s.id));
+    const offN = (cfg.disabled || []).length;
+    foot = `<div class="p-foot">
+      <b>선택 완료</b> ${takenCount()}명 / 사용 가능 좌석 ${usableCount()}석${offN ? ` (사용 불가 ${offN}석)` : ''}<br>
+      <b>미선택 학생 (${left.length}명)</b> ${left.length ? left.map(s => `${s.number}. ${esc(s.name)}`).join(' · ') : '없음'}
+    </div>`;
+  }
+
+  // 좌석이 가로로 넓으면 가로 용지, 세로로 길면 세로 용지
+  const wide = (cfg.blocks * cfg.cols) >= cfg.rows;
+
+  return `<style>@page{size:A4 ${wide ? 'landscape' : 'portrait'};margin:12mm;}</style>
+    <div class="p-head">
+      <div class="p-title">1학년 2반 자리표</div>
+      <div class="p-meta">${today} 기준 · ${dirNote}</div>
+    </div>
+    ${tView ? backEdge : podium}
+    <div class="p-blocks">${blocksHtml}</div>
+    ${tView ? podium : backEdge}
+    ${foot}`;
+}
+
+function printSeating(mode){
+  const root = document.getElementById('printRoot');
+  root.innerHTML = printSheetHtml(mode);
+  const done = () => { root.innerHTML = ''; window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  // 레이아웃·폰트가 적용된 뒤 인쇄 창을 띄운다
+  setTimeout(() => window.print(), 120);
+}
+
+// ── 공통 헤더 ────────────────────────────────────────────────
+function headerHtml(){
+  const teacher = userProfile?.role === 'teacher';
+  return `
+  <div class="header">
+    <div class="header-left">
+      <div>
+        <div class="header-title">🪑 자리 선택</div>
+        <div class="header-sub">1학년 2반 · 선착순</div>
+      </div>
+      ${teacher ? '<span class="badge-teacher">교사</span>' : ''}
+    </div>
+    <div class="header-right">
+      ${currentUser.photoURL ? `<img class="user-avatar" src="${currentUser.photoURL}" referrerpolicy="no-referrer">` : ''}
+      <span class="user-name">${teacher ? esc(currentUser.displayName) : esc(userProfile?.name || '')}</span>
+      <button class="btn-signout" id="btnSO">로그아웃</button>
+    </div>
+  </div>`;
+}
+
+// ── 교사 메인 ────────────────────────────────────────────────
+function renderTeacherMain(){
+  const m = cfg.mode;
+  setApp(`
+    ${headerHtml()}
+    <div class="main-wrap">
+      <div id="tStateArea"></div>
+
+      <div class="section-title" style="margin-top:0">⏰ 선택 가능 시간</div>
+      <div class="admin-panel">
+        <div class="mode-tabs">
+          <button class="mode-tab ${m==='closed'?'on':''}" data-mode="closed">🔒 닫기</button>
+          <button class="mode-tab ${m==='scheduled'?'on':''}" data-mode="scheduled">⏳ 시간 예약</button>
+          <button class="mode-tab ${m==='open'?'on':''}" data-mode="open">🏃 지금 바로 열기</button>
+        </div>
+        <div class="admin-row">
+          <div class="field"><label>시작</label>
+            <input class="admin-input" id="inOpen" type="datetime-local" value="${cfg.openAt || ''}"></div>
+          <div class="field"><label>마감</label>
+            <input class="admin-input" id="inClose" type="datetime-local" value="${cfg.closeAt || ''}"></div>
+          <button class="btn-admin" id="btnTime">시간 저장 + 예약</button>
+        </div>
+        <div class="admin-hint">
+          <b>시간 예약</b>은 위 시작~마감 사이에만 학생이 선택할 수 있습니다. <b>지금 바로 열기</b>는 시간 제한 없이 즉시 열립니다.
+          닫아두면 학생 화면에는 배치만 보이고 선택은 안 됩니다.
+        </div>
+      </div>
+
+      <div class="section-title">🪑 좌석 배치</div>
+      <div class="admin-panel">
+        <div class="admin-row">
+          <div class="field"><label>분단 수</label>
+            <input class="admin-input" id="inBlocks" type="number" min="1" max="${MAX_BLOCKS}" value="${cfg.blocks}" style="width:90px"></div>
+          <div class="field"><label>줄 수 (앞→뒤)</label>
+            <input class="admin-input" id="inRows" type="number" min="1" max="${MAX_ROWS}" value="${cfg.rows}" style="width:110px"></div>
+          <div class="field"><label>분단당 열 수</label>
+            <input class="admin-input" id="inCols" type="number" min="1" max="${MAX_COLS}" value="${cfg.cols}" style="width:110px"></div>
+          <button class="btn-admin" id="btnLayout">배치 적용</button>
+        </div>
+        <div class="admin-hint">
+          기본은 2분단 × 4줄 × 2열 = 16석입니다. 학생 수가 더 많으면 줄이나 열을 늘려주세요.<br>
+          아래 배치도에서 <b>좌석을 클릭</b>하면 학생 배정 · 자리 옮기기 · 선택 취소 · 사용 불가 잠금을 할 수 있습니다.
+        </div>
+      </div>
+
+      <div class="section-title">✅ 마감 &amp; 공개</div>
+      <div class="admin-panel">
+        <div class="admin-row">
+          <button class="btn-admin" id="btnFinish">🔒 선택 마감하고 결과 공개</button>
+          <button class="btn-admin ghost" id="btnPub">${cfg.published ? '🙈 결과 다시 숨기기' : '👀 결과만 공개하기'}</button>
+          <button class="btn-admin ghost" id="btnCopy">📋 자리표 복사</button>
+          <button class="btn-admin danger" id="btnReset">♻️ 전체 초기화</button>
+        </div>
+        <div class="admin-hint">
+          공개하기 전까지 학생에게는 선택된 자리가 <b>익명("선택됨")</b>으로만 보입니다. 공개하면 누가 어디 앉는지 이름이 보입니다.
+        </div>
+      </div>
+
+      <div class="section-title">🖨 인쇄</div>
+      <div class="admin-panel">
+        <div class="admin-row">
+          <button class="btn-admin" id="btnPrintS">🖨 학생용 인쇄 (교탁 위)</button>
+          <button class="btn-admin" id="btnPrintT">🖨 교사용 인쇄 (교탁 아래)</button>
+        </div>
+        <div class="admin-hint">
+          <b>학생용</b>은 화면과 같은 방향입니다 — 교탁이 위, 1줄이 맨 앞. 교실 뒤 게시판에 붙이기 좋습니다.<br>
+          <b>교사용</b>은 교탁에서 학생들을 바라본 방향으로 뒤집어 인쇄합니다 — 교탁이 아래로 오고 앞뒤·좌우가 반대라,
+          교탁 앞에 서서 종이를 그대로 들고 보면 눈앞의 학생 위치와 일치합니다. 미선택 학생 명단도 함께 인쇄됩니다.<br>
+          용지 방향(가로/세로)은 좌석 배치에 맞춰 자동으로 정해집니다.
+        </div>
+      </div>
+
+      <div class="section-title">📐 좌석 배치도 <span style="font-weight:400;text-transform:none;letter-spacing:0">— 실시간, 좌석을 눌러 조정</span></div>
+      <div id="roomArea"></div>
+
+      <div class="section-title">📋 선택 현황</div>
+      <div class="card" id="statusArea"></div>
+    </div>
+  `);
+
+  document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
+
+  // 모드 전환
+  document.querySelectorAll('.mode-tab').forEach(b => b.addEventListener('click', async () => {
+    const mode = b.dataset.mode;
+    if(mode === 'scheduled' && !document.getElementById('inOpen').value){
+      showToast('시작 시각을 먼저 입력해주세요'); return;
+    }
+    try{
+      const patch = { mode };
+      if(mode === 'scheduled'){
+        patch.openAt = document.getElementById('inOpen').value;
+        patch.closeAt = document.getElementById('inClose').value;
+      }
+      await saveCfg(patch);
+      document.querySelectorAll('.mode-tab').forEach(x => x.classList.toggle('on', x.dataset.mode === mode));
+      showToast(mode === 'open' ? '자리 선택을 열었어요 🏃' : mode === 'closed' ? '자리 선택을 닫았어요 🔒' : '예약 시간으로 설정했어요 ⏳');
+    }catch(e){ showToast(saveErr(e)); }
+  }));
+
+  // 시간 저장
+  document.getElementById('btnTime').addEventListener('click', async () => {
+    const openAt = document.getElementById('inOpen').value;
+    const closeAt = document.getElementById('inClose').value;
+    if(!openAt){ showToast('시작 시각을 입력해주세요'); return; }
+    if(closeAt && closeAt <= openAt){ showToast('마감이 시작보다 늦어야 합니다'); return; }
+    try{
+      await saveCfg({ openAt, closeAt, mode: 'scheduled' });
+      document.querySelectorAll('.mode-tab').forEach(x => x.classList.toggle('on', x.dataset.mode === 'scheduled'));
+      showToast('선택 시간을 저장했어요 ✓');
+    }catch(e){ showToast(saveErr(e)); }
+  });
+
+  // 배치 적용
+  document.getElementById('btnLayout').addEventListener('click', async () => {
+    const blocks = parseInt(document.getElementById('inBlocks').value);
+    const rows = parseInt(document.getElementById('inRows').value);
+    const cols = parseInt(document.getElementById('inCols').value);
+    if(!(blocks >= 1 && blocks <= MAX_BLOCKS) || !(rows >= 1 && rows <= MAX_ROWS) || !(cols >= 1 && cols <= MAX_COLS)){
+      showToast(`분단 1~${MAX_BLOCKS}, 줄 1~${MAX_ROWS}, 열 1~${MAX_COLS} 범위로 입력해주세요`); return;
+    }
+    // 이미 학생이 앉은 자리가 새 배치 밖으로 밀려나면 막는다
+    const inside = id => { const [b,r,c] = id.split('-').map(Number); return b <= blocks && r <= rows && c <= cols; };
+    const lost = Object.keys(seatMap).filter(id => !inside(id));
+    if(lost.length){
+      showToast(`${lost.map(seatNameOf).join(', ')}에 학생이 있어 줄일 수 없어요. 먼저 그 학생을 옮겨주세요.`, 5000);
+      return;
+    }
+    try{
+      await saveCfg({ blocks, rows, cols, disabled: (cfg.disabled || []).filter(inside) });
+      showToast(`${blocks}분단 × ${rows}줄 × ${cols}열 = ${blocks*rows*cols}석으로 바꿨어요 ✓`);
+    }catch(e){ showToast(saveErr(e)); }
+  });
+
+  // 마감 + 공개
+  document.getElementById('btnFinish').addEventListener('click', async () => {
+    if(!confirm('자리 선택을 마감하고 결과를 공개할까요?\n학생은 더 이상 선택할 수 없고, 누가 어디 앉는지 볼 수 있게 됩니다.')) return;
+    try{
+      await saveCfg({ mode: 'closed', published: true });
+      document.querySelectorAll('.mode-tab').forEach(x => x.classList.toggle('on', x.dataset.mode === 'closed'));
+      document.getElementById('btnPub').textContent = '🙈 결과 다시 숨기기';
+      showToast('마감하고 공개했어요 ✓');
+    }catch(e){ showToast(saveErr(e)); }
+  });
+  document.getElementById('btnPub').addEventListener('click', async () => {
+    try{
+      const next = !cfg.published;
+      await saveCfg({ published: next });
+      document.getElementById('btnPub').textContent = next ? '🙈 결과 다시 숨기기' : '👀 결과만 공개하기';
+      showToast(next ? '결과를 공개했어요 👀' : '결과를 다시 숨겼어요 🙈');
+    }catch(e){ showToast(saveErr(e)); }
+  });
+  document.getElementById('btnCopy').addEventListener('click', copyChart);
+  document.getElementById('btnPrintS').addEventListener('click', () => printSeating('student'));
+  document.getElementById('btnPrintT').addEventListener('click', () => printSeating('teacher'));
+
+  // 전체 초기화
+  document.getElementById('btnReset').addEventListener('click', async () => {
+    if(!takenCount()){ showToast('아직 선택된 자리가 없어요'); return; }
+    if(!confirm(`선택된 ${takenCount()}자리를 모두 지웁니다. 되돌릴 수 없습니다.\n계속할까요?`)) return;
+    if(prompt('정말 초기화하려면 초기화 라고 입력해주세요') !== '초기화'){ showToast('초기화를 취소했어요'); return; }
+    try{
+      const [s1, s2] = await Promise.all([getDocs(seatCol), getDocs(mineCol)]);
+      await Promise.all([...s1.docs, ...s2.docs].map(d => deleteDoc(d.ref)));
+      showToast('전체 초기화 완료 ✓');
+    }catch(e){ showToast('초기화 실패: ' + e.message); }
+  });
+
+  startWatch();
+}
+function saveErr(e){
+  return /permission|insufficient/i.test(e.message)
+    ? '저장 권한이 없습니다 — Firestore 보안 규칙에 seating 컬렉션을 추가해주세요'
+    : '저장 실패: ' + e.message;
+}
+
+// ── 학생 메인 ────────────────────────────────────────────────
+function renderStudentMain(){
+  setApp(`
+    ${headerHtml()}
+    <div class="main-wrap">
+      <div id="noticeArea"></div>
+      <div id="roomArea"></div>
+      <div class="legend">
+        <span><i class="dot free"></i> 빈자리 (누르면 선택)</span>
+        <span><i class="dot taken"></i> 이미 선택된 자리</span>
+        <span><i class="dot mine"></i> 내 자리</span>
+        <span><i class="dot off"></i> 사용 불가</span>
+      </div>
+      <div class="admin-hint" style="margin-top:18px;max-width:640px">
+        위쪽 <b>교탁</b>이 교실 앞이고, <b>1줄</b>이 맨 앞줄입니다. 화면에 보이는 그대로의 배치예요.<br>
+        자리는 <b>먼저 누른 사람 순</b>으로 정해지고, <b>한 번 선택하면 바꿀 수 없습니다.</b>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn-admin ghost" id="btnPrintS">🖨 자리표 인쇄</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('btnSO').addEventListener('click', () => signOut(auth));
+  document.getElementById('btnPrintS').addEventListener('click', () => printSeating('student'));
+  startWatch();
+}
+
+// ── 로그인 화면 ───────────────────────────────────────────────
+function renderLogin(){
+  setApp(`
+    <div class="login-screen"><div class="login-card">
+      <div class="login-icon">🪑</div>
+      <div class="login-title">자리 선택</div>
+      <div class="login-sub">1학년 2반 · 선착순으로 앉을 자리를 골라요</div>
+      <button class="btn-google" id="bL">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Google 계정으로 로그인
+      </button>
+    </div></div>
+  `);
+  document.getElementById('bL').addEventListener('click', async () => {
+    try{ await signInWithPopup(auth, gProv); }
+    catch(e){ showToast('로그인 실패: ' + e.message); }
+  });
+}
+
+// ── 미등록 계정 안내 ──────────────────────────────────────────
+function renderUnregistered(email){
+  setApp(`
+    <div class="login-screen"><div class="login-card">
+      <div style="font-size:52px;margin-bottom:16px">⛔</div>
+      <div class="login-title" style="font-size:22px">등록되지 않은 계정</div>
+      <div class="login-sub" style="margin-bottom:28px">
+        <strong>${esc(email)}</strong><br>은 등록된 학생 이메일이 아닙니다.<br><br>
+        선생님께 이메일 등록을 요청하세요.
+      </div>
+      <button class="btn-primary" id="bLO">로그아웃</button>
+    </div></div>
+  `);
+  document.getElementById('bLO').addEventListener('click', () => signOut(auth));
+}
+
+// ── 로그인 상태 감시 ──────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  stopWatch();
+  moveFrom = null; closeModal();
+  if(!user){ currentUser = null; userProfile = null; mySeatId = null; renderLogin(); return; }
+  currentUser = user;
+
+  await loadCfg();
+
+  if(isTeacher(user)){
+    userProfile = { role:'teacher' };
+    await loadStudents();
+    renderTeacherMain();
+    return;
+  }
+
+  const student = await findByEmail(user.email);
+  if(!student){ renderUnregistered(user.email); return; }
+
+  userProfile = { studentId: student.id, name: student.name, number: student.number ?? null, role: 'student' };
+  renderStudentMain();
+});
+</script>
+</body>
+</html>
