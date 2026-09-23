@@ -138,6 +138,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .m-btn.close{text-align:center;color:var(--muted);}
 .m-sel{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:11px;padding:12px;font-size:14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;width:100%;color-scheme:dark;}
 
+/* ── 페이지 전환 (교사 계정에만 보임) ── */
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-links a{color:var(--muted);font-size:12px;font-weight:700;text-decoration:none;border:1px solid var(--border);border-radius:9px;padding:6px 11px;transition:all 0.2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--glow);border-color:var(--glow);}
+.nav-links a.cur{color:var(--glow);border-color:var(--glow);background:rgba(255,255,255,0.05);}
+
 /* ── 인쇄 (화면에서는 숨김) ── */
 #printRoot{display:none;}
 @media print{
@@ -768,6 +774,16 @@ function printSeating(mode){
   setTimeout(() => window.print(), 120);
 }
 
+// ── 페이지 전환 버튼 (교사 계정에만 보임) ────────────────────
+const NAV = [
+  ['index.html','🏠 홈'], ['miracle6th.html','🌟 미라클 6월'],
+  ['counseling.html','💬 상담'], ['seating.html','🪑 자리'], ['students.html','👥 명단'],
+];
+const navHtml = () => isTeacher(currentUser)
+  ? `<div class="nav-links">${NAV.map(([h,t]) =>
+      `<a class="${h === 'seating.html' ? 'cur' : ''}" href="${h}">${t}</a>`).join('')}</div>`
+  : '';
+
 // ── 공통 헤더 ────────────────────────────────────────────────
 function headerHtml(){
   const teacher = userProfile?.role === 'teacher';
@@ -781,6 +797,7 @@ function headerHtml(){
       ${teacher ? '<span class="badge-teacher">교사</span>' : ''}
     </div>
     <div class="header-right">
+      ${navHtml()}
       ${currentUser.photoURL ? `<img class="user-avatar" src="${currentUser.photoURL}" referrerpolicy="no-referrer">` : ''}
       <span class="user-name">${teacher ? esc(currentUser.displayName) : esc(userProfile?.name || '')}</span>
       <button class="btn-signout" id="btnSO">로그아웃</button>

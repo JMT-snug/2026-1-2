@@ -161,6 +161,13 @@
     .comment-empty{font-size:13px;color:var(--muted);font-style:italic;padding:4px 0;}
     .btn-comment-save{background:linear-gradient(135deg,#F59E0B,#D97706);color:white;border:none;border-radius:12px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;font-family:'Noto Sans KR',sans-serif;transition:all 0.2s;}
     .btn-comment-save:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(245,158,11,0.4);}
+
+    /* ── 페이지 전환 (교사 계정에만 보임) ── */
+    .nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+    .nav-links a{color:var(--muted);font-size:12px;font-weight:700;text-decoration:none;border:1px solid var(--border);border-radius:9px;padding:6px 11px;transition:all 0.2s;white-space:nowrap;}
+    .nav-links a:hover{color:var(--glow);border-color:var(--glow);}
+    .nav-links a.cur{color:var(--glow);border-color:var(--glow);background:rgba(255,255,255,0.05);}
+    .header-right{flex-wrap:wrap;}
   </style>
 </head>
 <body>
@@ -377,6 +384,16 @@ function buildCalendar(teacher){
     </div>`;
 }
 
+// ── 페이지 전환 버튼 (교사 계정에만 보임) ─────────────────────
+const NAV=[
+  ['index.html','🏠 홈'],['miracle6th.html','🌟 미라클 6월'],
+  ['counseling.html','💬 상담'],['seating.html','🪑 자리'],['students.html','👥 명단'],
+];
+const navHtml=()=>isTeacher(currentUser)
+  ? `<div class="nav-links">${NAV.map(([h,t])=>
+      `<a class="${h==='miracle6th.html'?'cur':''}" href="${h}">${t}</a>`).join('')}</div>`
+  : '';
+
 // ── 학생 카드 ─────────────────────────────────────────────────
 function renderCards(){
   if(!studentList.length)
@@ -412,6 +429,7 @@ async function renderMain(){
         ${teacher?'<span class="badge-teacher">교사</span>':''}
       </div>
       <div class="header-right">
+        ${navHtml()}
         ${currentUser.photoURL?`<img class="user-avatar" src="${currentUser.photoURL}" referrerpolicy="no-referrer">`:''}
         <span class="user-name">${teacher?currentUser.displayName:(userProfile?.name||'')}</span>
         <button class="btn-signout" id="btnSO">로그아웃</button>

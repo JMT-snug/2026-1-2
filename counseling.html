@@ -125,6 +125,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
 .empty-state .em{font-size:44px;margin-bottom:12px;}
 
+/* ── 페이지 전환 (교사 계정에만 보임) ── */
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-links a{color:var(--muted);font-size:12px;font-weight:700;text-decoration:none;border:1px solid var(--border);border-radius:9px;padding:6px 11px;transition:all 0.2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--glow);border-color:var(--glow);}
+.nav-links a.cur{color:var(--glow);border-color:var(--glow);background:rgba(255,255,255,0.05);}
+
 /* ── Toast ── */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(22,36,31,0.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);color:var(--text);border-radius:14px;padding:12px 24px;font-size:14px;font-weight:700;z-index:300;opacity:0;transition:opacity 0.3s,transform 0.3s;white-space:nowrap;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -526,6 +532,16 @@ function paintOverview(){
   }).join('');
 }
 
+// ── 페이지 전환 버튼 (교사 계정에만 보임) ────────────────────
+const NAV = [
+  ['index.html','🏠 홈'], ['miracle6th.html','🌟 미라클 6월'],
+  ['counseling.html','💬 상담'], ['seating.html','🪑 자리'], ['students.html','👥 명단'],
+];
+const navHtml = () => isTeacher(currentUser)
+  ? `<div class="nav-links">${NAV.map(([h,t]) =>
+      `<a class="${h === 'counseling.html' ? 'cur' : ''}" href="${h}">${t}</a>`).join('')}</div>`
+  : '';
+
 // ── 공통 헤더 ────────────────────────────────────────────────
 function headerHtml(){
   const teacher = isTeacher(currentUser);
@@ -539,6 +555,7 @@ function headerHtml(){
       ${teacher ? '<span class="badge-teacher">교사</span>' : ''}
     </div>
     <div class="header-right">
+      ${navHtml()}
       ${currentUser.photoURL ? `<img class="user-avatar" src="${currentUser.photoURL}" referrerpolicy="no-referrer">` : ''}
       <span class="user-name">${teacher ? currentUser.displayName : (userProfile?.name || '')}</span>
       <button class="btn-signout" id="btnSO">로그아웃</button>

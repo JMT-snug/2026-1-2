@@ -44,8 +44,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .user-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(56,189,248,0.5);}
 .user-name{font-size:13px;color:var(--muted);}
 .badge-teacher{background:linear-gradient(135deg,#F59E0B,#EF4444);color:white;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:900;letter-spacing:0.5px;}
-.btn-nav{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:12px;text-decoration:none;transition:all 0.2s;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
-.btn-nav:hover{border-color:var(--glow);color:var(--glow);}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-links a{color:var(--muted);font-size:12px;font-weight:700;text-decoration:none;border:1px solid var(--border);border-radius:9px;padding:6px 11px;transition:all 0.2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--glow);border-color:var(--glow);}
+.nav-links a.cur{color:var(--glow);border-color:var(--glow);background:rgba(255,255,255,0.05);}
 .btn-signout{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:12px;transition:all 0.2s;font-family:'Noto Sans KR',sans-serif;}
 .btn-signout:hover{border-color:var(--red);color:var(--red);}
 
@@ -197,6 +199,16 @@ function saveErr(e){
     ? '권한이 없습니다 — Firestore 보안 규칙을 확인해주세요'
     : '실패: ' + e.message;
 }
+
+// ── 페이지 전환 버튼 (이 페이지는 교사 전용) ─────────────────
+const NAV = [
+  ['index.html','🏠 홈'], ['miracle6th.html','🌟 미라클 6월'],
+  ['counseling.html','💬 상담'], ['seating.html','🪑 자리'], ['students.html','👥 명단'],
+];
+const navHtml = () => isTeacher(currentUser)
+  ? `<div class="nav-links">${NAV.map(([h,t]) =>
+      `<a class="${h === 'students.html' ? 'cur' : ''}" href="${h}">${t}</a>`).join('')}</div>`
+  : '';
 
 // ── 명단 실시간 감시 ─────────────────────────────────────────
 function startWatch(){
@@ -528,9 +540,7 @@ function renderMain(){
         <span class="badge-teacher">교사</span>
       </div>
       <div class="header-right">
-        <a class="btn-nav" href="miracle6th.html">🌟 미라클 6월</a>
-        <a class="btn-nav" href="counseling.html">💬 상담</a>
-        <a class="btn-nav" href="seating.html">🪑 자리</a>
+        ${navHtml()}
         ${currentUser.photoURL ? `<img class="user-avatar" src="${currentUser.photoURL}" referrerpolicy="no-referrer">` : ''}
         <span class="user-name">${esc(currentUser.displayName || '')}</span>
         <button class="btn-signout" id="btnSO">로그아웃</button>
