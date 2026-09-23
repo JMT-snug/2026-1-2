@@ -380,7 +380,7 @@ function buildCalendar(teacher){
 // ── 학생 카드 ─────────────────────────────────────────────────
 function renderCards(){
   if(!studentList.length)
-    return `<div class="empty-state"><div class="em">👥</div>${isTeacher(currentUser)?'위 패널에서 학생을 추가해주세요.':'학생 목록이 없습니다.'}</div>`;
+    return `<div class="empty-state"><div class="em">👥</div>${isTeacher(currentUser)?'<a href="students.html" style="color:#A5B4FC">학생 명단 관리</a>에서 학생을 추가해주세요.':'학생 목록이 없습니다.'}</div>`;
   return studentList.map(s=>{
     const me=userProfile?.studentId===s.id;
     return `<div class="student-card${me?' is-me':''}" data-sid="${s.id}">
@@ -420,14 +420,15 @@ async function renderMain(){
 
     <div class="main-wrap">
       ${teacher?`
-        <div class="section-title" style="margin-top:0">🔧 교사 관리 — 학생 등록</div>
+        <div class="section-title" style="margin-top:0">🔧 교사 관리</div>
         <div class="admin-panel" style="margin-bottom:32px">
-          <div class="admin-title">학생 추가 (이메일로 권한 자동 연결)</div>
-          <div class="admin-row">
-            <input class="admin-input" id="aN" type="number" placeholder="출석번호" min="1" max="40" style="max-width:90px">
-            <input class="admin-input" id="aName" placeholder="이름">
-            <input class="admin-input" id="aEmail" type="email" placeholder="학생 Google 이메일 (예: student@gmail.com)" style="flex:2">
-            <button class="btn-admin" id="btnAdd">+ 추가</button>
+          <div class="admin-title">학생 명단은 별도 페이지에서 관리합니다</div>
+          <div class="admin-row" style="align-items:center">
+            <a class="btn-admin" href="students.html"
+               style="text-decoration:none;display:inline-block">👥 학생 명단 관리 열기</a>
+            <span style="font-size:12px;color:var(--muted);line-height:1.6">
+              추가 · 수정 · 삭제, 엑셀 명단 붙여넣기, 로그인 연결 확인을 한곳에서 할 수 있어요.
+            </span>
           </div>
         </div>
       `:''}
@@ -442,24 +443,6 @@ async function renderMain(){
   document.getElementById('btnSO').addEventListener('click',()=>signOut(auth));
 
   if(teacher){
-    // 학생 추가
-    document.getElementById('btnAdd').addEventListener('click',async()=>{
-      const n=parseInt(document.getElementById('aN').value);
-      const name=document.getElementById('aName').value.trim();
-      const email=document.getElementById('aEmail').value.trim().toLowerCase();
-      if(!n||!name||!email){showToast('번호, 이름, 이메일 모두 입력해주세요');return;}
-      if(!email.includes('@')){showToast('이메일 형식을 확인해주세요');return;}
-      const id='student_'+String(n).padStart(2,'0');
-      await setDoc(doc(db,'students',id),{number:n,name,email,uid:null});
-      showToast(`${name} (${email}) 등록 완료 ✓`);
-      document.getElementById('aN').value='';
-      document.getElementById('aName').value='';
-      document.getElementById('aEmail').value='';
-      await loadStudents();
-      document.getElementById('grid').innerHTML=renderCards();
-      attachCards();
-    });
-
     // 달력 수정/저장
     const bEdit=document.getElementById('btnCalEdit');
     const bSave=document.getElementById('btnCalSave');
