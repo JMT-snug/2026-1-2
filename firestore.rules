@@ -1,0 +1,138 @@
+rules_version = '2';
+
+// 1학년 2반 학급 홈페이지 - Firestore 보안 규칙
+//
+// 배포: Firebase 콘솔 > Firestore Database > 규칙 탭에서
+//       Ctrl+A 로 전체 선택 후 이 파일 내용 전체를 붙여넣고 [게시]
+//       (이전 규칙은 firestore.rules.backup 에 있습니다)
+//
+// 페이지별로 쓰는 컬렉션
+//   students.html   : students
+//   miracle6th.html : students, goals, schedule, users
+//   counseling.html : students, counsel_slots, counsel_resv
+//   seating.html    : students, seating, seating_seats, seating_mine
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== 공통 함수 =====
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // 교사 계정 목록.
+    // 학교 도메인(@snu-g.ms.kr)은 학생도 함께 쓰므로 도메인으로 판별하면 안 됩니다.
+    // 각 html 파일 안의 TEACHER_EMAILS 목록과 항상 똑같이 맞춰주세요.
+    function isTeacher() {
+      return isAuth() && request.auth.token.email in [
+        'rapidwing@snu-g.ms.kr'
+      ];
+    }
+
+    // 이 학생 문서가 지금 로그인한 사람의 것인지
+    function isOwner(studentId) {
+      return isAuth()
+        && exists(/databases/$(database)/documents/students/$(studentId))
+        && get(/databases/$(database)/documents/students/$(studentId)).data.uid == request.auth.uid;
+    }
+
+    // ===== 사용자 프로필 =====
+
+    match /users/{uid} {
+      allow read: if isAuth();
+      allow write: if isAuth() && (request.auth.uid == uid || isTeacher());
+    }
+
+    // ===== 학생 명단 (students.html 에서 관리) =====
+    // 학생은 '아직 연결 안 된 + 내 이메일과 같은' 문서에만 자기 uid 를 붙일 수 있습니다.
+    // (남의 문서를 가로채 그 학생의 기록을 여는 것을 막습니다)
+
+    match /students/{studentId} {
+      allow read: if isAuth();
+      allow create, delete: if isTeacher();
+      allow update: if isTeacher()
+        || (isAuth()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid'])
+            && request.resource.data.uid == request.auth.uid
+            && resource.data.uid == null
+            && resource.data.email == request.auth.token.email);
+    }
+
+    // ===== 미라클 6월: 학생별 목표, 기록, 교사 코멘트 =====
+
+    match /goals/{studentId} {
+      allow read: if isAuth();
+      allow write: if isTeacher() || isOwner(studentId);
+    }
+
+    // ===== 미라클 6월: 6월 일정표 =====
+
+    match /schedule/{docId} {
+      allow read: if isAuth();
+      allow write: if isTeacher();
+    }
+
+    // ===== 상담 신청: 시간 칸 =====
+    // 만들기, 삭제는 교사만. 학생은 '빈 칸을 내 것으로'(신청) 또는
+    // '내 칸을 빈 칸으로'(취소) 하는 것만 가능합니다.
+
+    match /counsel_slots/{slotId} {
+      allow read: if isAuth();
+      allow create, delete: if isTeacher();
+      allow update: if isTeacher() || (
+        isAuth()
+        && request.resource.data.date == resource.data.date
+        && request.resource.data.time == resource.data.time
+        && (
+          (resource.data.taken == false
+           && request.resource.data.taken == true
+           && getAfter(/databases/$(database)/documents/counsel_resv/$(slotId)).data.uid == request.auth.uid)
+          ||
+          (resource.data.taken == true
+           && request.resource.data.taken == false
+           && get(/databases/$(database)/documents/counsel_resv/$(slotId)).data.uid == request.auth.uid
+           && !existsAfter(/databases/$(database)/documents/counsel_resv/$(slotId)))
+        )
+      );
+    }
+
+    // ===== 상담 신청: 예약자 정보 (이름 비공개의 핵심) =====
+    // update 는 교사만. 출석번호를 바꿀 때 예약에 적힌 이름을 갱신하기 위함입니다.
+
+    match /counsel_resv/{slotId} {
+      allow read: if isTeacher() || (isAuth() && resource.data.uid == request.auth.uid);
+      allow create: if isTeacher() || (isAuth() && request.resource.data.uid == request.auth.uid);
+      allow update: if isTeacher();
+      allow delete: if isTeacher() || (isAuth() && resource.data.uid == request.auth.uid);
+    }
+
+    // ===== 자리 선택: 설정 (시간, 배치, 공개 여부) =====
+
+    match /seating/{docId} {
+      allow read: if isAuth();
+      allow write: if isTeacher();
+    }
+
+    // ===== 자리 선택: 좌석 =====
+    // 학생은 '아무도 없는 자리를 내 uid 로 새로 만드는 것'만 됩니다.
+    // 고치기, 지우기가 교사 전용이라 한 번 고른 자리는 학생이 바꿀 수 없습니다.
+
+    match /seating_seats/{seatId} {
+      allow read: if isAuth();
+      allow create: if isTeacher()
+        || (isAuth() && request.resource.data.uid == request.auth.uid);
+      allow update, delete: if isTeacher();
+    }
+
+    // ===== 자리 선택: 학생당 1석 보장용 기록 =====
+    // 이 문서가 이미 있으면 그 학생은 두 번째 자리를 만들 수 없습니다.
+
+    match /seating_mine/{studentId} {
+      allow read: if isAuth();
+      allow create: if isTeacher()
+        || (isAuth() && request.resource.data.uid == request.auth.uid);
+      allow update, delete: if isTeacher();
+    }
+  }
+}
